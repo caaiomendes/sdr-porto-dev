@@ -17,7 +17,7 @@ jobs:
         server: ${{ secrets.ftp_host }}
         username: ${{ secrets.ftp_user }}
         password: ${{ secrets.ftp_password }}
-        server-dir: subdominios/homologacao/
+        server-dir: /var/www/vhosts/sdr.caiopereira.pt/httpdocs/
         local-dir: front/ 
         exclude: |
           **/.git*
