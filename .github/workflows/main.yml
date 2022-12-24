@@ -15,10 +15,8 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
         server: sdr.caiopereira.pt
-        username: root
+        username: sdrporto
         password: ${{ secrets.ftp_password }}
-        protocol: ftps
-        port : 22
         server-dir: /var/www/vhosts/sdr.caiopereira.pt/httpdocs/
         local-dir: front/ 
         exclude: |
