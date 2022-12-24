@@ -1,7 +1,7 @@
 on: 
   push:
     branches:
-      - 345-modulo-whatsapp
+      - master
 name: 🚀 Deploy website on push
 jobs:
   web-deploy:
@@ -14,9 +14,11 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
-        server: ${{ secrets.ftp_host }}
-        username: ${{ secrets.ftp_user }}
+        server: sdr.caiopereira.pt
+        username: root
         password: ${{ secrets.ftp_password }}
+        protocol: ftps
+        port : 22
         server-dir: /var/www/vhosts/sdr.caiopereira.pt/httpdocs/
         local-dir: front/ 
         exclude: |
