@@ -1,0 +1,10 @@
+{
+    "projectId": "128076ed-9868-4e98-9cef-98dd8b705d75",
+    "env": {
+      "login_url": "https://homologacao.sdrporto.com.br/",
+      "user": "dentista1@sistema.com.br",
+      "password": "123",
+      "user_admin": "administrador@sistema.com.br",
+      "password_admin": "123"
+    }
+  }

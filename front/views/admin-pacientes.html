@@ -1,0 +1,2558 @@
+<div id="pacientes" class="container-scroller">
+  <div class="container-fluid">
+    <div class="content-wrapper">
+      <div id="tabela" ng-if="!flagEditando" class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Lista de pacientes</h4>
+              <p class="card-description" ng-if="(objetos | json) != '{}'">Abaixo a lista de <code>pacientes</code> já
+                cadastrados.</p>
+              <button id="novo" type="button" class="btn btn-primary btn-rounded" ng-click="novo()">+</button>
+              <div class="row">
+                <input type="text" id="busca" class="form-control col-md-6 mb-3" ng-model="objeto.busca"
+                  ng-keyup="buscarPacientes()" />
+                <!-- agora a busca é só digitando
+                  <button class="btn btn-success  col-md-3 ml-3  mb-3" ng-click="buscarPacientes()">Buscar</button> 
+                -->
+              </div>
+              <div class="row alert alert-fill-info" role="alert" ng-if="(objetos | json) == '{}' && buscado">
+                Não encontramos resultados para esta busca :(
+              </div>
+              <div class="row">
+                <div class="table-sorter-wrapper col-lg-12 table-responsive">
+                  <table id="sortable-table-1" class="table" ng-if="(objetos | json) != '{}'">
+                    <thead>
+                      <tr>
+                        <th class="pointer sortStyle">Nome<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="pointer sortStyle">CPF<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="pointer sortStyle">Email<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="pointer sortStyle">Telefone<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="" ng-if="flagAdmin">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="objeto in objetos">
+                        <td class="pointer" id="load" ng-click="selecionar(objeto)">{{objeto.nome}}</td>
+                        <td class="pointer" id="load" ng-click="selecionar(objeto)">{{objeto.cpf}}</td>
+                        <td class="pointer" id="load" ng-click="selecionar(objeto)">{{objeto.email}}</td>
+                        <td class="pointer" id="load" ng-click="selecionar(objeto)">{{objeto.telefone}}</td>
+                        <td class="" ng-if="flagAdmin">
+                          <a href="javascript:void(0)" ng-click="selecionar(objeto)" class="botao-de-acao editar">
+                            <i class="fa fa-edit"></i>
+                          </a>
+
+                          <a href="javascript:void(0)" class="botao-de-acao excluir" ng-click="excluir(objeto)">
+                            <i class="fa fa-trash-o"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <nav class="col-12" aria-label="Page navigation">
+                    <ul id="pagination-demo" class="pagination mt-3"></ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="incaltPaciente" ng-if="flagEditando" class="row">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="col-12 row">
+                <div class="col-6">
+                  <h4 class="card-title">{{pessoa.nome}}</h4>
+                  <p class="card-description" ng-if="pessoa.nascimento">
+                    <i class="mdi mdi-cake-variant"></i> {{pessoa.nascimento}} ({{pessoa.idade}} anos)
+                  </p>
+                  <h6>
+                    <i class="mdi  mdi-home-variant"></i>
+                    {{clinicaSelecionada.nome}}
+                  </h6>
+                </div>
+                <div class="col-6 text-right">
+                  <div class="span-datails text-right" style="flex-direction:column;">
+                    <input disabled class="text-right inputDetails" style="font-size: 12px;" type="text" name="data"
+                      id="data"><br><br>
+                    <input disabled style=" color:navy; text-decoration: underline"
+                      class="text-right inputDetails nomeDentista" type="text" name="procd" id="procd"><br><br>
+                    <input disabled class="text-right inputDetails nomeDentista" type="text" name="dentista"
+                      id="dentista">
+                  </div>
+                </div>
+              </div>
+              <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="gerais-tab" data-toggle="tab" href="#gerais-tab-content" role="tab"
+                    aria-controls="home-1" aria-selected="true">Dados Gerais</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="anamnese-tab" data-toggle="tab" href="#anamnese-tab-content" role="tab"
+                    aria-controls="anamnese-tab-content" aria-selected="false">Anamnese</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="arquivos-tab" data-toggle="tab" href="#arquivos-tab-content" role="tab"
+                    aria-controls="arquivos-tab-content" aria-selected="false">Arquivos</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="historico-tab" data-toggle="tab" href="#historico-tab-content" role="tab"
+                    aria-controls="historico-tab-content" aria-selected="false">Histórico</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="atendimento-tab" data-toggle="tab" href="#atendimento-tab-content" role="tab"
+                    aria-controls="atendimento-tab-content" aria-selected="false">Atendimento</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="planejamento-tab" data-toggle="tab" href="#planejamento-tab-content" role="tab"
+                    aria-controls="planejamento-tab-content" aria-selected="false">Planejamento Financeiro
+                    <span class="parcela-em-aberto" ng-if="possuiParcelasVencidas.length > 0">$</span>  
+                  </a>
+                  
+                </li>
+              </ul>
+              <div class="tab-content" ng-init="mostrandoAbas()">
+                <div class="tab-pane fade show active" id="gerais-tab-content" role="tabpanel"
+                  aria-labelledby="home-tab">
+                  <form class="forms-sample" name="form" id="form" method="post" enctype="multipart/form-data"
+                    autocomplete="nope">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group" ng-class="{'has-danger' : form.cpf.$error.cpf} ">
+                          <label for="cpf">CPF (*)</label>
+                          <input type="text" name="cpf" id="cpf" ng-class="{'has-success' : form.cpf.$valid } "
+                            class="form-control" ng-model="objeto.cpf" placeholder="CPF"
+                            ng-pattern="/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/" required cpf-validator>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="nome">Nome (*)</label>
+                          <input id="nome" name="nome" type="search" class="form-control" ng-model="objeto.nome"
+                            placeholder="Nome" required>
+                        </div>
+                      </div>
+                      <div class="col-md-6" ng-if="form.cpf.$valid && !objeto.id">
+                        <div class="form-group">
+                          <a href="javascript:void(0)" class="validar btn btn-success"
+                            ng-click="validarUsuarioExistente()">validar cpf</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="email">Email</label>
+                          <input type="text" id="email" class="form-control" ng-model="objeto.email" placeholder="Email"
+                            data-inputmask="'alias': 'email'">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="telefone">
+                              Telefone 
+                              <a class="telefone-whatsapp" target="_blank" href="https://api.whatsapp.com/send?phone={{objeto.telefoneWhatsapp}}&amp;text=Olá {{objeto.nome}}, "><i class="mdi mdi-whatsapp"></i></a> 
+                            </label>
+                          <input type="text" id="telefone" class="form-control" ng-model="objeto.telefone"
+                            placeholder="Telefone">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="rg">RG</label>
+                          <input type="text" id="rg" class="form-control" ng-model="objeto.rg" placeholder="RG">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="estadoCivil">Estado Civil</label>
+                          <select class="form-control" id="estadoCivil" ng-model="objeto.estadoCivil">
+                            <option value="solteiro">solteiro(a)</option>
+                            <option value="casado">casado(a)</option>
+                            <option value="divorciado">divorciado(a)</option>
+                            <option value="viúvo">viúvo(a)</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="convenioNome">Nome do convênio</label>
+                          <!-- <input type="text" id="convenioNome" class="form-control" ng-if="objeto.id" ng-model="objeto.convenioNome" placeholder="Nome do convênio">-->
+                          <select class="form-control" ng-model="objeto.convenioNome" lass="form-control">
+                            <option value="AMIL">AMIL</option>
+                            <option value="METLIFE">METLIFE</option>
+                            <option value="UNIMED">UNIMED</option>
+                            <option value="ODONTOPREV">ODONTOPREV</option>
+                            <option value="INDEFINIDO">INDEFINIDO</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="convenioNumero">Número do convênio</label>
+                          <input type="text" id="convenioNumero" class="form-control" ng-model="objeto.convenioNumero"
+                            placeholder="Número do convênio">
+                        </div>
+                      </div>
+                    </div>
+                    <!-- 
+                          <div class="row hide">
+                            <div class="col-md-6 ">
+                              <div class="form-group">
+                                <label>Foto</label>
+                                <input type="file" name="files" class="form-control" ng-model="objeto.foto" onchange="angular.element(this).scope().upload()">
+                                <br />
+                                <img class="thumb" ng-if="objeto.foto" ng-src="{{barramento}}/upload/{{objeto.foto}}" width="100px" >
+                              </div>
+                            </div>
+                          </div> 
+                          -->
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputCity1">Endereço</label>
+                          <input type="text" class="form-control" ng-model="objeto.endereco" placeholder="Endereço">
+                        </div>
+                      </div>
+                      <div class="col-md-6 ">
+                        <div class="form-group">
+                          <label for="datepicker-nascimento">Data de nascimento</label>
+                          <div id="datepicker-nascimento" class="input-group date datepicker">
+                            <input type="text" class="form-control" ng-model="objeto.nascimento" readonly>
+                            <span class="input-group-addon input-group-append border-left">
+                              <span class="mdi mdi-calendar input-group-text"></span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="sexo">Sexo</label>
+                          <select class="form-control" id="sexo" ng-model="objeto.sexo">
+                            <option value="masculino">Masculino</option>
+                            <option value="feminino">Feminino</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="descricao">Descrição</label>
+                          <input type="text" id="descricao" class="form-control" ng-model="objeto.descricao"
+                            placeholder="Descrição">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <span>(*) Campos obrigatórios</span>
+                    </div>
+                    <div class="row mt-3">
+
+                      <!-- VAMOS validar duplicidade de CPF no futuro  -->
+                      <!--
+                        <button type="submit" class="btn btn-primary mr-2"
+                        ng-disabled="form.$invalid || !objeto.cpfDisponivel" ng-click="salvar()">Salvar </button> 
+                      -->
+                      <button type="submit" class="btn btn-primary mr-2" ng-disabled="form.$invalid"
+                        ng-click="salvar()">Salvar </button>
+                      <button class="btn btn-danger mr-2" ng-click="excluir(objeto)"
+                        ng-if="objeto.id && $storage.tipo =='administrador'">Excluir</button>
+                      <button class="btn btn-success d-none" ng-click="preencher()">Preencher</button>
+                    </div>
+                    <pre class="d-none">{{form | json}}</pre>
+                    <pre class="d-none">objeto.cpfDisponivel: {{objeto.cpfDisponivel }}</pre>
+                  </form>
+                </div>
+                <div class="tab-pane fade" id="anamnese-tab-content" role="tabpanel" aria-labelledby="home-tab"
+                  ng-controller="AnamneseController">
+                  <form class="forms-sample" name="form-anamnese" id="form-anamnese">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="nome">1. Qual motivo da sua consulta?</label>
+                          <input type="text" id="1" class="form-control" id="anamnese1-f" name="anamnese1"
+                            ng-model="anamnese.resposta1" placeholder="">
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="email">2. Quando foi sua última visita ao dentista?</label>
+                          <input type="text" id="2" class="form-control" id="anamnese2-f" name="anamnese2"
+                            ng-model="anamnese.resposta2" placeholder="">
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="telefone">3. Quando você se fere, as feridas demora a cicatrizar?</label>
+                          <p class="mb-2">Sim</p>
+                          <label class="toggle-switch toggle-switch-success">
+                            <input type="checkbox" id="anamnese3-f" name="anamnese3" ng-model="anamnese.resposta3"
+                              ng-true-value="'sim'" ng-false-value="'nao'">
+                            <span class="toggle-slider round"></span>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="telefone">4. Já teve ou tem alguma tipo de alergia? Caso sim, a que?</label>
+                          <p class="mb-2">Sim</p>
+                          <label class="toggle-switch toggle-switch-success">
+                            <input type="checkbox" id="anamnese4flag-f" name="anamnese4flag"
+                              ng-model="anamnese.resposta4flag" ng-true-value="'ativo'" ng-false-value="'inativo'">
+                            <span class="toggle-slider round"></span>
+                          </label>
+                          <input type="text" id="4" class="form-control" id="anamnese4-f" name="anamnese4"
+                            ng-model="anamnese.resposta4"
+                            ng-show="anamnese.resposta4flag=='ativo' || anamnese.resposta4" placeholder="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">5. Já teve ou tem alguma reação anormal com outros medicamentos?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese5flag-f" name="anamnese5flag"
+                            ng-model="anamnese.resposta5flag" ng-true-value="'ativo'" ng-false-value="'inativo'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                        <input type="text" id="5" class="form-control" id="anamnese5-f" name="anamnese5"
+                          ng-model="anamnese.resposta5" ng-show="anamnese.resposta5flag=='ativo' || anamnese.resposta5"
+                          placeholder="">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">6. Já teve ou tem diabetes? Caso sim, está compensado?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese6flag-f" name="anamnese6flag"
+                            ng-model="anamnese.resposta6flag" ng-true-value="'ativo'" ng-false-value="'inativo'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                        <input type="text" id="6" class="form-control" id="anamnese6-f" name="anamnese6"
+                          ng-model="anamnese.resposta6" ng-show="anamnese.resposta6flag=='ativo' || anamnese.resposta6"
+                          placeholder="">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">7. Já teve ou tem alguma doença ou patologia na família? Caso sim,
+                          quais?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese7flag-f" name="anamnese7flag"
+                            ng-model="anamnese.resposta7flag" ng-true-value="'ativo'" ng-false-value="'inativo'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                        <input type="text" id="7" class="form-control" id="anamnese7-f" name="anamnese7"
+                          ng-model="anamnese.resposta7" ng-show="anamnese.resposta7flag=='ativo' || anamnese.resposta7"
+                          placeholder="">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">8. Já teve ou tem algum problema com pressão alta?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese8-f" name="anamnese8" ng-model="anamnese.resposta8"
+                            ng-true-value="'sim'" ng-false-value="'nao'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">9. Já teve ou tem cardiopatia congênita? Caso sim, quais?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese9flag-f" name="anamnese9flag"
+                            ng-model="anamnese.resposta9flag" ng-true-value="'ativo'" ng-false-value="'inativo'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                        <input type="text" id="9" class="form-control" id="anamnese9-f" name="anamnese9"
+                          ng-model="anamnese.resposta9" ng-show="anamnese.resposta9flag=='ativo' || anamnese.resposta9"
+                          placeholder="">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">10. Já teve ou tem hemorragia?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese10-f" name="anamnese10" ng-model="anamnese.resposta10"
+                            ng-true-value="'sim'" ng-false-value="'nao'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">11. Já fez alguma cirurgia? Qual? Quando?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese11flag-f" name="anamnese11flag"
+                            ng-model="anamnese.resposta11flag" ng-true-value="'ativo'" ng-false-value="'inativo'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                        <input type="text" id="11" class="form-control" id="anamnese11-f" name="anamnese11"
+                          ng-model="anamnese.resposta11"
+                          ng-show="anamnese.resposta11flag=='ativo' || anamnese.resposta11" placeholder="">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">12. Já tomou anestesia odontológica? Alguma reação?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese12flag-f" name="anamnese12flag"
+                            ng-model="anamnese.resposta12flag" ng-true-value="'ativo'" ng-false-value="'inativo'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                        <input type="text" id="12" class="form-control" id="anamnese12-f" name="anamnese12"
+                          ng-model="anamnese.resposta12"
+                          ng-show="anamnese.resposta12flag=='ativo' || anamnese.resposta12" placeholder="">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">13. Tem alguma outra informação que gostaria de relatar?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese13flag-f" name="anamnese13flag"
+                            ng-model="anamnese.resposta13flag" ng-true-value="'ativo'" ng-false-value="'inativo'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                        <input type="text" id="13" class="form-control" id="anamnese13-f" name="anamnese13"
+                          ng-model="anamnese.resposta13"
+                          ng-show="anamnese.resposta13flag=='ativo' || anamnese.resposta13" placeholder="">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="telefone">14. Você declara a veracidade de todas as informações dadas
+                          anteriormente?</label>
+                        <p class="mb-2">Sim</p>
+                        <label class="toggle-switch toggle-switch-success">
+                          <input type="checkbox" id="anamnese14-f" name="anamnese14" ng-model="anamnese.resposta14"
+                            ng-true-value="'sim'" ng-false-value="'nao'">
+                          <span class="toggle-slider round"></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <button type="submit" class="btn btn-primary mr-2" ng-disabled="!form-anamnese.$valid"
+                        ng-click="salvar()">Salvar</button>
+                      <button type="button" class="btn btn-warning mr-2 hide" ng-click="preencher()">Preencher</button>
+                    </div>
+                    <pre class="hide">{{anamnese | json}}</pre>
+                  </form>
+                </div>
+                <div class="tab-pane fade" id="arquivos-tab-content" role="tabpanel" aria-labelledby="home-tab"
+                  ng-controller="ArquivoController">
+                  <div class="xxx">
+                    <div id="tabela" ng-if="!flagEditando" class="row">
+                      <div class="col-12 grid-margin">
+                        <div class="card">
+                          <div class="card-body">
+                            <h4 class="card-title">Lista de arquivos do paciente</h4>
+                            <p class="card-description" ng-if="(objetos | json) != '{}'">Abaixo a lista de
+                              <code>arquivos</code> já cadastrados.
+                            </p>
+                            <button id="novo" type="button" class="btn btn-primary btn-rounded"
+                              ng-click="novo()">+</button>
+                            <div class="jumping-dots-loader" ng-if="!buscado">
+                              <span></span>
+                              <span></span>
+                              <span></span>
+                            </div>
+                            <div class="row alert alert-fill-info" role="alert"
+                              ng-if="(objetos | json) == '{}' && buscado">
+                              Ainda não temos nada cadastrado :(
+                            </div>
+                            <div class="row">
+                              <div class="table-sorter-wrapper col-lg-12 table-responsive">
+                                <table id="sortable-table-1" class="table" ng-if="(objetos | json) != '{}'">
+                                  <thead>
+                                    <tr>
+                                      <th class="pointer sortStyle">Ícone<i class="mdi mdi-chevron-down"></i></th>
+                                      <th class="pointer sortStyle">Nome<i class="mdi mdi-chevron-down"></i></th>
+                                      <th class="pointer sortStyle">Tipo<i class="mdi mdi-chevron-down"></i></th>
+                                      <th>Ações</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr ng-repeat="objeto in objetos">
+                                      <td class="pointer">
+                                        <a target="_blank" href="{{barramento}}/upload/{{objeto.url}}"
+                                          class="abrirImagem xxx">
+                                          <!-- TODO: verificar se o tamanho das imagens nao sao muito grandes, devendo gerar thumbs -->
+                                          <!-- 
+                                          <img class="thumb" ng-if="objeto.urlImagem" 
+                                            ng-src="{{barramento}}/upload/{{objeto.url}}" width="100px">
+                                          -->
+                                          <img class="thumb" ng-if="objeto.urlImagem"
+                                            ng-src="images/arquivos/arquivo-generico.png">
+
+                                          <img class="thumb" ng-if="!objeto.urlImagem"
+                                            ng-src="images/arquivos/arquivo-pdf.png">
+                                        </a>
+                                      </td>
+                                      <td class="pointer" ng-click="selecionar(objeto)">{{objeto.nome}}</td>
+                                      <td class="pointer" ng-click="selecionar(objeto)">{{objeto.tipo}}</td>
+                                      <td>
+                                        <a href="javascript:void(0)" ng-click="selecionar(objeto)"
+                                          class="botao-de-acao editar">
+                                          <i class="fa fa-edit"></i>
+                                        </a>
+
+                                        <a href="javascript:void(0)" ng-click="download(objeto)" class="botao-de-acao">
+                                          <i class="fa fa-download"></i>
+                                        </a>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="incalt" ng-if="flagEditando" class="row">
+                      <div class="col-12 grid-margin stretch-card">
+                        <div class="card">
+                          <div class="card-body">
+                            <h4 class="card-title">Arquivos</h4>
+                            <p class="card-description">
+                              Inclusão ou alteração de arquivos
+                            </p>
+                            <form class="forms-sample" id="form-arquivos" method="post" enctype="multipart/form-data">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="exampleInputName1">Nome</label>
+                                    <input type="text" class="form-control" id="arquivo-nome" ng-model="objeto.nome" placeholder="Nome">
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="tipo">Tipo</label>
+                                    <input type="text" id="arquivo-tipo" class="form-control" ng-model="objeto.tipo"
+                                      placeholder="tipo">
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="descricao">Descrição</label>
+                                    <input type="text" class="form-control" id="arquivo-descricao" ng-model="objeto.descricao"
+                                      placeholder="descricao">
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label>Arquivo</label>
+                                    <input type="file" name="files" id="arquivo-file" class="form-control" ng-model="objeto.url"
+                                      onchange="angular.element(this).scope().upload()">
+                                    <br />
+                                    <a href="{{barramento}}/upload/{{objeto.url}}" target="_blank" class="arquivo"
+                                      ng-if="objeto.url">
+                                      <img class="thumb" ng-if="!objeto.urlImagem"
+                                        ng-src="images/arquivos/arquivo-pdf.png">
+                                      <img class="thumb" ng-if="objeto.urlImagem"
+                                        ng-src="{{barramento}}/upload/{{objeto.url}}" width="100px">
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <button type="submit" id="arquivo-salvar" class="btn btn-primary mr-2" ng-click="salvar()">Salvar</button>
+                                <button class="btn btn-light mr-2" ng-click="voltar()">Mostrar arquivos</button>
+                                <button class="btn btn-danger mr-2" ng-click="excluirConfirmacao(objeto)"
+                                  ng-if="objeto.id">Excluir</button>
+                                <button class="btn btn-success d-none" ng-click="preencher()">Preencher</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="historico-tab-content" role="tabpanel" aria-labelledby="home-tab"
+                  ng-controller="HistoricoController">
+                  <div class="header-historico">
+                    <h4 class="card-title text-center">Histórico do paciente</h4>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-2 col-md-3 col-sm-2 listPages">
+                      <ul class="nav flex-column">
+                        <li class="nav-item activateStep"
+                          ng-class="{'nav-tabs-back-selected': initViews[0], 'nav-tabs-back': !initViews[0] }">
+                          <a class="nav-link colorNameOptions active" ng-click="listarViewEspecifica(0)">Desenvolvimento
+                            Clínico</a>
+                        </li>
+                        <li class="nav-item"
+                          ng-class="{'nav-tabs-back-selected': initViews[1], 'nav-tabs-back': !initViews[1] }">
+                          <a ng-class="{'disabledStep' : botaoZero, 'activateStep': !botaoZero}"
+                            class="nav-link colorNameOptions" ng-click="listarViewEspecifica(1)">Timbrado</a>
+                        </li>
+                        <li class="nav-item"
+                          ng-class="{'nav-tabs-back-selected': initViews[2], 'nav-tabs-back': !initViews[2] }">
+                          <a ng-class="{'disabledStep' : botaoZero, 'activateStep': !botaoZero}"
+                            class="nav-link colorNameOptions" ng-click="listarViewEspecifica(2)">Atestado</a>
+                        </li>
+                        <li class="nav-item"
+                          ng-class="{'nav-tabs-back-selected': initViews[3], 'nav-tabs-back': !initViews[3] }">
+                          <a ng-class="{'disabledStep' : botaoZero, 'activateStep': !botaoZero}"
+                            class="nav-link colorNameOptions" ng-click="listarViewEspecifica(3)">Exames</a>
+                        </li>
+                        <li class="nav-item"
+                          ng-class="{'nav-tabs-back-selected': initViews[4], 'nav-tabs-back': !initViews[4] }">
+                          <a ng-class="{'disabledStep' : botaoZero, 'activateStep': !botaoZero}"
+                            class="nav-link colorNameOptions" ng-click="listarViewEspecifica(4)">Prescrições</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col-md-9 col-lg-10 col-sm-10" ng-if="!initViews[0]">
+                      <div class="col-12">
+                        <h3>
+                          {{subTilte}}
+                        </h3>
+                      </div>
+                      <div class="row alert alert-fill-info" role="alert" ng-if="arrayItens.length <= 0">
+                        Ainda não temos nada cadastrado :(
+                      </div>
+                      <div class="col-12 contentListHitorico" ng-if="arrayItens.length > 0">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Título</th>
+                              <th scope="col">Criação</th>
+                              <th scope="col">Dentista</th>
+                              <th scope="col hide">Abrir</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr ng-repeat="item in arrayItens">
+                              <th scope="row">{{item.registro.id}}</th>
+                              <td>{{item.registro.titulo}}</td>
+                              <td>{{item.registro.dataConvertida}}</td>
+                              <td>{{item.dentistaID ? item.dentista[0].nome : item.dentista[0].nome}}</td>
+                              <td>
+                                <button type="button" class="btn btn-secondary" ng-click="callPdf(item)">Abrir</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="col-md-9 col-lg-10 col-sm-10" ng-if="initViews[0]">
+                      <div class="row alert alert-fill-info" role="alert"
+                        ng-if="historicoListaPorData.length <= 0 && historicoLista.length <= 0">
+                        Ainda não temos nada cadastrado :(
+                      </div>
+                      <div class="col-12" ng-if="historicoListaPorData.length > 0">
+                        <h3>
+                          Desenvolvimento Clínico
+                        </h3>
+                      </div>
+                      <div class="row historicoTab" ng-if="historicoListaPorData.length > 0">
+                        <div class="col-12 content"
+                          style="border: solid 1px white; max-height: 400px; overflow:auto; padding: 10px;">
+                          <div class="col-12 itemHistorico">
+                            <div class="bs-example" id="accordionExampleOne">
+                            </div>
+                            <div class="bs-example" id="accordionExampleOne">
+                              <div ng-repeat="item in historicoListaPorData | orderBy:'-dataOrder'">
+                                <div class="card">
+                                  <div class="text-left">
+                                    <div class="card-header" data-toggle="collapse"
+                                      data-target="#collapseOne-{{$index}}" style="cursor: pointer;"
+                                      id="headingOne-{{$index}}">
+                                      <h2 class="mb-0">
+                                        <button type="button" class="btn"><i class="fa fa-plus"
+                                            style="margin-right: 10px;"></i>
+                                          Data: <b>{{item.dataAgendamento ? item.dataAgendamento : item.data}} -
+                                            {{item.data[0].a[0].profissionalNome ? item.data[0].a[0].profissionalNome : item.profissionalNome}}
+                                          </b>
+                                          Clínica:
+                                          <b>{{item.dataAgendamento ? item.data[0].c[0].nome :  item.c[0].nome}}
+                                            <br></b>
+                                        </button>
+                                      </h2>
+                                    </div>
+                                    <div id="collapseOne-{{$index}}" class="collapse"
+                                      aria-labelledby="headingOne-{{$index}}" data-parent="#accordionExampleOne">
+                                      <div class="card-body">
+                                        <div class="col-lg-12 col-sm-12">
+                                          Comentário:
+                                          <b>{{item.data[0].a[0].comentario ? item.data[0].a[0].comentario : item.comentario}}<br></b>
+                                        </div>
+                                        <div ng-repeat="odontograma in item.data track by $index"
+                                          ng-if="odontograma.o.dente" style="margin: 10px;">
+                                          <div class="row">
+                                            <div class="col-lg-1"></div>
+                                            <div class="col-lg-2 col-sm-12" ng-if="isNumber(odontograma.o.dente)">
+                                              Dente: <b>{{odontograma.o.dente}}</b>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-12" ng-if="!isNumber(odontograma.o.dente)">
+                                              Região: <b>{{odontograma.o.dente}}</b>
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                            <div class="col-lg-2"></div>
+                                            <div class="col-lg-10 col-sm-12">
+                                              <div style="margin: 10px;" class="row" ng-if="odontograma.s.length > 0">
+                                                Situação:
+                                                <div ng-repeat="situacao in odontograma.s">
+                                                  &nbsp;
+                                                  <b>{{situacao.situacao}}
+                                                    {{odontograma.s.length > $index + 1 ? ' ' : ''}}</b><br>
+                                                </div>
+                                              </div>
+                                              <div style="margin: 10px;" class="row" ng-if="odontograma.f.length > 0">
+                                                Face:
+                                                <div ng-repeat="faceta in odontograma.f">
+                                                  &nbsp;
+                                                  <b>{{faceta.faceta}}
+                                                    {{odontograma.f.length > $index + 1 ? ' ' : ''}}</b><br>
+                                                </div>
+                                              </div>
+                                              <div style="margin: 10px;" ng-if="odontograma.o .descricao">
+                                                Observação: &nbsp; <b>{{odontograma.o.descricao}}</b><br>
+                                              </div>
+                                              <div style="margin: 10px;" ng-if="odontograma.p.length > 0">
+                                                Procedimento:<br>
+                                                <div class="row" ng-repeat="procedimento in odontograma.p">
+                                                  <div class="col-lg-2"></div>
+                                                  <div class="col-lg-10 col-sm-12">
+                                                    <p style="border-bottom: solid 1px;">
+                                                      <b>{{procedimento.nomeProc}}</b>
+                                                      <b
+                                                        ng-if="procedimento.realizado == 1 && procedimento.mostrarRealizado == 1"> - <strong><u>Realizado</u></strong></b>
+														
+                                                      <b ng-if="procedimento.dentistaID != 0"> - <strong><u>Encaminhado</u></strong></b>
+                                                      <b ng-if="procedimento.dentistaID == 0 && procedimento.mostrarRealizado != 1"> - <strong><u>Planejado</u></strong></b>
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div style="margin: 10px;" ng-if="odontograma.o.atualizacao != ''">
+                                                atualização: &nbsp; <b>{{odontograma.o.atualizacao}}</b><br>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <br>
+                      <div class="col-12" ng-if="historicoLista.length > 0">
+                        <h3>
+                          Histórico Bucal
+                        </h3>
+                      </div>
+                      <div class="row historicoTab" ng-if="historicoLista.length > 0">
+                        <div class="col-12 content"
+                          style="border: solid 1px white; max-height: 400px; overflow:auto; padding: 10px;">
+                          <div class="col-12 itemHistorico">
+                            <div class="bs-example" id="accordionExample">
+                            </div>
+                            <div class="bs-example" id="accordionExample">
+                              <div ng-repeat="item in historicoLista | orderBy:'-dente'">
+                                <div class="card">
+                                  <div class="card-header" data-toggle="collapse" data-target="#collapseTwo-{{$index}}"
+                                    style="cursor: pointer;" id="headingOne-{{$index}}">
+                                    <h2 class="mb-0">
+                                      <button type="button" class="btn"><i class="fa fa-plus"
+                                          style="margin-right: 10px;"></i>
+                                        Dente: {{item.dente}}
+                                      </button>
+                                    </h2>
+                                  </div>
+                                  <div id="collapseTwo-{{$index}}" class="collapse"
+                                    aria-labelledby="headingOne-{{$index}}" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                      <div class="text-left">
+                                        <div ng-repeat="atendimento in item.data" style="margin: 10px;">
+                                          <div class="row">
+                                            <div class="col-lg-1"></div>
+                                            <div class="col-lg-12 col-sm-12" ng-repeat="i in atendimento.a">
+                                              Data: <b>{{i.data | date: 'dd-MM-yyyy'}} -
+                                                {{i.profissionalNome}}</b>
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                            <div class="col-lg-2"></div>
+                                            <div class="col-lg-10 col-sm-12">
+                                              <div style="margin: 10px;" class="row" ng-if=" atendimento.s.length >0">
+                                                Situação:
+                                                <div ng-repeat="situacao in atendimento.s">
+                                                  &nbsp;
+                                                  <b>{{situacao.situacao}}
+                                                    {{odontograma.s.length > $index + 1 ? ' ' : ''}}</b><br>
+                                                </div>
+                                              </div>
+                                              <div style="margin: 10px;" class="row" ng-if="atendimento.f.length > 0">
+                                                Faceta:
+                                                <div ng-repeat="faceta in atendimento.f">
+                                                  &nbsp;
+                                                  <b>{{faceta.faceta}}
+                                                    {{odontograma.f.length > $index + 1 ? ' ' : ''}}</b><br>
+                                                </div>
+                                              </div>
+                                              <div style="margin: 10px;" ng-if="atendimento.o.descricao">
+                                                Observação: &nbsp; <b>{{atendimento.o.descricao}}</b><br>
+                                              </div>
+                                              <div style="margin: 10px;" ng-if="atendimento.p.length > 0">
+                                                Procedimento:<br>
+                                                <div class="row" ng-repeat="procedimento in atendimento.p">
+                                                  <div class="col-lg-2"></div>
+                                                  <div class="col-lg-10 col-sm-12">
+                                                    <p style="border-bottom: solid 1px;">
+                                                      <b>{{procedimento.nomeProc}}</b>
+                                                      <b
+                                                        ng-if="procedimento.realizado == 1 && procedimento.mostrarRealizado == 1"> - <strong><u>Realizado</u></strong></b>
+                                                      <b ng-if="procedimento.dentistaID != 0"> - <strong><u>Encaminhado</u></strong></b>
+                                                      <b ng-if="procedimento.dentistaID == 0 && procedimento.mostrarRealizado != 1"> - <strong><u>Planejado</u></strong></b>
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div style="margin: 10px;" ng-if="atendimento.o.atualizacao != ''">
+                                                atualização: &nbsp; <b>{{atendimento.o.atualizacao}}</b><br>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="atendimento-tab-content" role="tabpanel" aria-labelledby="home-tab"
+                  ng-controller="AtendimentoController">
+                  <div class="" ng-if="!editandoAtendimento">
+                    <div class="">
+                      <h4 class="card-title">Lista de atendimento do paciente</h4>
+                      <p class="card-description" ng-if="(objetos | json) != '{}' && (objetos | json) != '[]'">Abaixo
+                        a
+                        lista de <code>atendimentos</code> já realizados.</p>
+                      <div class="jumping-dots-loader" ng-if="!buscado">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                      <div class="row alert alert-fill-info" role="alert"
+                        ng-if="((objetos | json) == '{}' || (objetos | json) == '[]') && buscado">
+                        Ainda não temos nada cadastrado :(
+                      </div>
+                      <div class="row">
+                        <div class="table-sorter-wrapper col-lg-12 table-responsive">
+                          <table id="sortable-table-1" class="table"
+                            ng-if="(objetos | json) != '{}' && (objetos | json) != '[]'">
+                            <thead>
+                              <tr>
+                                <th class=" sortStyle">#<i class="mdi mdi-chevron-down"></i></th>
+                                <th class=" sortStyle">Data<i class="mdi mdi-chevron-down"></i></th>
+                                <th class=" sortStyle">Início<i class="mdi mdi-chevron-down"></i></th>
+                                <th class=" sortStyle">Dentista<i class="mdi mdi-chevron-down"></i></th>
+                                <th class=" sortStyle">Paciente<i class="mdi mdi-chevron-down"></i></th>
+                                <th class=" sortStyle">Clínica<i class="mdi mdi-chevron-down"></i></th>
+                                <th class="pointer sortStyle">Situação<i class="mdi mdi-chevron-down"></i></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr ng-repeat="objeto in objetos | orderBy:['-data', '-horarioInicio']" data-id="{{objeto.id}}">
+                                <td class="pointer" ng-click="editarAtendimento(objeto)">{{$index+1}}</td>
+                                <td class="pointer" ng-click="editarAtendimento(objeto)">
+                                  {{objeto.data | date: 'dd-MM-yyyy'}}</td>
+                                <td class="pointer" ng-click="editarAtendimento(objeto)">{{objeto.horarioInicio}}</td>
+                                <td class="pointer" ng-click="editarAtendimento(objeto)">{{objeto.profissionalNome}}
+                                <td class="pointer" ng-click="editarAtendimento(objeto)">{{objeto.nome}}
+                                <td class="pointer" id="load" ng-click="selecionar(objeto)">{{objeto.clinicaNome.nome}}
+                                </td>
+                                </td>
+                                <td class="pointer" ng-click="editarAtendimento(objeto)">{{objeto.situacao}}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div ng-if="editandoAtendimento">
+                    <div class="col-12">
+                      <button id="itensPrescricao" ng-click="finalizarAtendimento()"
+                        class="buttonsPrescicao float-right btn btn-danger">
+                        Finalizar
+                      </button>
+                    </div>
+                    <div class="row col-12">
+                      <div class="col-4"></div>
+                      <div class="row col-8">
+                        <div ng-controller="PrescricaoController" id="teset">
+                          <button ng-controller="TimbradoController" id="itensPrescricao"
+                            class="buttonsPrescicao btn btn-info" class="text-right" ng-click="openModalTimbrado()">
+                            Timbrado
+                          </button>
+                          <button ng-controller="AtestadoController" id="itensPrescricao"
+                            class="buttonsPrescicao btn btn-info" class="text-right" ng-click="openModalAtestado()">
+                            Atestado
+                          </button>
+                          <button id="itensPrescricao" class="buttonsPrescicao btn btn-info"
+                            ng-repeat="item in listaAtividades" class="text-right" ng-click="defineFunction(item.nome)">
+                            {{item.nome}}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row col-12">
+                      <div class="col-4 row">
+                        <i class="pointer mdi mdi-arrow-left-bold-circle-outline"
+                          style="font-size: 15px; color: #0DDBB9;" ng-click="return()">
+                          Voltar
+                        </i>
+                      </div>
+                      <div class="col-6 form-group row dentes-selecionados">
+                        <div class="item" ng-repeat="item in odontograma.odontograma">
+                          <div class="form-check form-check-success">
+                            <label class="form-check-label">
+                              <input type="radio" name="item.dente" ng-value="item.dente"
+                                ng-model="listaOdontograma.dente" ng-click="denteSelecionado(item.dente)">
+                              {{item.dente}}
+                              <i class="input-helper"></i></label>
+                          </div>
+                          <a href="javascript:void(0)" class="remover-dente" ng-click="removerDente(item)">x</a>
+                        </div>
+                      </div>
+                      <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-5 col-sm-3 listPages">
+                        <ul class="nav flex-column">
+                          <li class="nav-item activateStep"
+                            ng-class="{'nav-tabs-back-selected': views[0], 'nav-tabs-back': !views[0] }">
+                            <a class="nav-link colorNameOptions active" ng-click="listarViewEspecifica(0)">Regiões</a>
+                          </li>
+                          <li class="nav-item"
+                            ng-class="{'nav-tabs-back-selected': views[1], 'nav-tabs-back': !views[1] }">
+                            <a ng-class="{'disabledStep' : botaoZero, 'activateStep': !botaoZero}"
+                              class="nav-link colorNameOptions" ng-click="listarViewEspecifica(1)">Situação</a>
+                          </li>
+                          <li class="nav-item"
+                            ng-class="{'nav-tabs-back-selected': views[2], 'nav-tabs-back': !views[2] }">
+                            <a ng-class="{'disabledStep' : botaoZero, 'activateStep': !botaoZero}"
+                              class="nav-link colorNameOptions" ng-click="listarViewEspecifica(2)">Faces</a>
+                          </li>
+                          <li class="nav-item"
+                            ng-class="{'nav-tabs-back-selected': views[3], 'nav-tabs-back': !views[3] }">
+                            <a ng-class="{'disabledStep' : botaoZero, 'activateStep': !botaoZero}"
+                              class="nav-link colorNameOptions" ng-click="listarViewEspecifica(3)">Procedimentos</a>
+                          </li>
+                          <li class="nav-item"
+                            ng-class="{'nav-tabs-back-selected': views[4], 'nav-tabs-back': !views[4] }">
+                            <a ng-class="{'disabledStep' : botaoZero, 'activateStep': !botaoZero}"
+                              class="nav-link colorNameOptions" ng-click="listarViewEspecifica(4)">Atualização</a>
+                          </li>
+                        </ul>
+
+                        <button class="btn btn-primary criarPlanejamentos" ng-click="criarPlanejamentos()">Criar planejamento financeiro</button>
+                      </div>
+                      <div class="col-md-7 col-lg-9 col-sm-9 templateListOption">
+                        <!--INICIO TAB DENTES-->
+                        <div ng-if="views[0]">
+                          <div class="col-12 row">
+                            <div class="col-md-6 col-sm-9">
+                              <h3 class="titleTemplateList">
+                                Regiões <br>
+                                <small class="text-muted subTitleTemplateList">Selecione uma região</small>
+                              </h3>
+                            </div>
+                            <div class="col-md-6 col-sm-9 row">
+                              <button style="font-size: 12px; visibility: hidden;"
+                                class="buttonNextStep col-4 btn btn-light mt-3" ng-click="backStep(0)">
+                                Anterior
+                              </button>
+                              <button ng-disabled="botaoZero" style="font-size: 12px;"
+                                class="buttonNextStep col-4 btn btn-light mt-3" ng-click="nextStep(1)">
+                                Próximo
+                              </button>
+                            </div>
+                          </div>
+                          <div id="odontograma" class="form-group odontograma">
+                            <div class="dente-wrapper" ng-repeat="dente in dentes">
+                              <a href="javascript:void(0)" class="dente btn btn-info dente-{{dente.id}}"
+                                ng-disabled="visualizaDetalhes" ng-click="selecionarDente(dente)" ng-value="dente.nome"
+                                ng-model="atendimentoListaParamentros.dente">{{dente.nome}}</a>
+                            </div>
+                          </div>
+                        </div>
+                        <!--FINAL TAB DENTES-->
+                        <!--INCIO TAB SITUAÇÃO-->
+                        <div ng-if="views[1]">
+                          <div class="col-12 row">
+                            <div class="col-6">
+                              <h3 class="titleTemplateList">
+                                Situação <br>
+                                <small class="text-muted subTitleTemplateList">Selecione a situação do dente</small>
+                              </h3>
+                            </div>
+                            <div class="col-6 row">
+                              <button style="font-size: 12px;" class="buttonNextStep col-4 btn btn-light mt-3"
+                                ng-click="backStep(0)">
+                                Anterior
+                              </button>
+                              <button ng-disabled="botaoUm" type="submit" style="font-size: 12px;"
+                                class="buttonNextStep col-4 btn btn-light mt-3" ng-click="nextStep(2)">
+                                Próximo
+                              </button>
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                            <div ng-repeat="item in situacaoDentes">
+                              <div class="form-check form-check-success">
+                                <label class="form-check-label">
+                                  <input ng-disabled="visualizaDetalhes" ng-click="verificarBotoes()"
+                                    ng-model="situacao[item.id]" type="checkbox" name="item.nome">
+                                  {{item.nome}}
+                                  <i class="input-helper"></i></label>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                        <!--FIM TAB SITUAÇÃO-->
+
+                        <!--INICIO TAB FACE-->
+                        <div ng-if="views[2]">
+                          <div class="col-12 row">
+                            <div class="col-6">
+                              <h3 class="titleTemplateList">
+                                Face <br>
+                                <small class="text-muted subTitleTemplateList">Selecione uma face</small>
+                              </h3>
+                            </div>
+                            <div class="col-6 row">
+                              <button style="font-size: 12px;" class="buttonNextStep col-4 btn btn-light mt-3"
+                                ng-click="backStep(1)">
+                                Anterior
+                              </button>
+                              <button ng-disabled="botaoDois" style="font-size: 12px;"
+                                class="buttonNextStep col-4 btn btn-light mt-3" ng-click="nextStep(3)">
+                                Próximo
+                              </button>
+                            </div>
+                            <div class="row col-12">
+                              <div class="col-3 form-group">
+                                <div ng-repeat="item in facesDentes">
+                                  <div class="form-check form-check-success">
+                                    <label class="form-check-label">
+                                      <input ng-disabled="visualizaDetalhes" ng-click="verificarBotoes()"
+                                        ng-model="face[item.id]" type="checkbox" name="item.nome" id="item.nome">
+                                      {{item.nome}}
+                                      <i class="input-helper"></i></label>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-9">
+                                <textarea ng-disabled="visualizaDetalhes"
+                                  ng-model="atendimentoListaParamentros.comentario" rows="8" cols="40" maxlength="300"
+                                  placeholder="Deixe aqui um comentário!"></textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!--FIM TAB FACE-->
+
+                        <!--INICIO TAB PROCEDIMENTO-->
+                        <div class="col-12" ng-if="views[3]">
+                          <div class="row">
+                            <div class="col-6">
+                              <h3 class="titleTemplateList">
+                                Procedimentos <br>
+                                <small class="text-muted subTitleTemplateList">Selecione o(s) procedimento(s)</small>
+                              </h3>
+                            </div>
+                            <div class="col-6 row">
+                              <button style="font-size: 12px;" class="buttonNextStep col-4 btn btn-light mt-3"
+                                ng-click="backStep(2)">
+                                Anterior
+                              </button>
+                              <button ng-disabled="botaoTres" style="font-size: 12px;"
+                                class="buttonNextStep col-4 btn btn-light mt-3" ng-click="nextStep(4)">
+                                Próximo
+                              </button>
+                            </div>
+                          </div>
+                          <select class="row col-12" ng-controller="DentistaController" ng-model="categoria.nome"
+                            ng-options="item as item for item in procedimentos track by item"
+                            ng-change="filtrarProcedimentosPorCategoria(categoria.nome)">
+                          </select>
+                          <div class="container col-12 row" style="padding: 10px;">
+                            <select style="max-height: 100px; min-height: 100px;" multiple ng-if="categoria.nome != ''"
+                              ng-model="atendimentoListaParamentros.procedimentos"
+                              ng-options="item as item.nome for item in procedimentosLista track by item.id"
+                              ng-dblclick="adicionarProcedimentos(atendimentoListaParamentros.procedimentos)">
+                            </select>
+                          </div>
+                          <div class="col-12 row" style="padding: 10px;">
+                            <table id="sortable-table-1" class="table" ng-if="listaProcedimentos.length > 0">
+                              <thead>
+                                <tr>
+                                  <th width="200px" class="pointer sortStyle">Procedimento<i
+                                      class="mdi mdi-chevron-down"></i>
+                                  </th>
+                                  <th width="50px" class="pointer sortStyle">Tipo</th>
+                                  <th width="50px" class="pointer sortStyle"></th>
+                                  <!-- <th width="50px" class="pointer sortStyle">Realizado</th>
+                                  <th width="50px" class="pointer sortStyle">Encaminhado</th> -->
+                                  <th width="50px" class="pointer sortStyle">Ações</th>
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-repeat="item in listaProcedimentos">
+                                  <!-- {{objeto.nome | limitTo:50 }} {{objeto.nome.length > 50 ? '...' : ''}}</td> -->
+                                  <td title="{{item.nome ? item.nome : item.descricao}}" class="">
+                                    <!-- Cliente pediu para remover, acho que vai voltar -->
+                                    <!-- <span ng-if="item.tipo == 'particular'">R$ {{item.valor1}} - </span> -->
+                                    {{item.nome ? item.nome : item.descricao | limitTo:45}}
+                                  </td>
+                                  <td>
+                                    <div class="switch-field">
+                                      <input ng-click="verificarBotoes(item)" id="conv+{{$index}}" type="radio"
+                                        ng-model="item.tipo" value="convenio" name="conv+{{$index}}"
+                                        ng-disabled="{{item.realizado == '1' ? true : false}}" />
+                                      <label for="conv+{{$index}}" class="hvr-box-shadow-inset">Convênio</label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="switch-field">
+                                      <input ng-click="verificarBotoes(item)" id="part+{{$index}}" type="radio"
+                                        ng-model="item.tipo" value="particular" name="part+{{$index}}"
+                                        ng-disabled="{{item.realizado == '1' ? true : false}}" />
+                                      <label for="part+{{$index}}" class="hvr-box-shadow-inset">Particular</label>
+                                    </div>
+                                  </td>
+                                  <td class="" style="font-size: 15px;">
+                                    <button class="btn btn-danger" ng-click="removerProcedimentoLista(item)"
+                                      ng-disabled="{{item.realizado == '1' ? true : false}}">
+                                      <i class="mdi mdi-delete"></i>
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <!--FIM TAB PROCEDIMENTO-->
+
+                        <!--INICIO TAB ATUALIZAÇÃO-->
+                        <div ng-if="views[4]">
+                          <div class="col-12 row">
+                            <div class="col-6">
+                              <h3 class="titleTemplateList">
+                                Atualização <br>
+                              </h3>
+                            </div>
+                            <div class="col-6 row">
+                              <button style="font-size: 12px;" class="buttonNextStep col-4 btn btn-light mt-3"
+                                ng-click="backStep(3)">
+                                Anterior
+                              </button>
+                              <!-- <button ng-disabled="visualizaDetalhes" style="font-size: 12px;"
+                                ng-click="finalizarAtualizarAtendimento()"
+                                class="buttonNextStep col-4 btn btn-light mt-3">
+                                Finalizar
+                              </button> -->
+                            </div>
+                            <textarea ng-disabled="visualizaDetalhes" style="width: 100%;"
+                              ng-model="atendimentoListaParamentros.atualizacaoDente" rows="8" cols="40" maxlength="300"
+                              placeholder="Deixe aqui sua Atualização do dente Selecionado!"></textarea>
+                          </div>
+                          <button style="font-size: 12px;" class="buttonNextStep col-2 btn btn-light mt-3"
+                            ng-click="salvarAtualizacaoDente()">
+                            Salvar Atualização
+                          </button>
+                        </div>
+                        <!--FIM TAB ATUALIZAÇÃO-->
+
+
+                      </div>
+                      <!-- INICIO VISÃO GERAL -->
+                      <div class="col-lg-3 col-md-5 col-sm-3"></div>
+                      <div class="col-md-7 col-lg-9 col-sm-9 templateListOption"
+                        style="padding: 10px; margin-top: 3px;">
+                        <h4 class="text-center">
+                          Planejamento Clínico
+                        </h4>
+                        <table id="sortable-table-1" class="table" ng-if="(objetos | json) != '{}'">
+                          <thead ng-if="allProcedimentosDentes.length > 0">
+                            <tr>
+                              <th width="50px" class="pointer sortStyle">Dente</th>
+                              <th width="200px" class="pointer sortStyle">Procedimento<i
+                                  class="mdi mdi-chevron-down"></i>
+                              </th>
+                              <!-- <th width="50px" class="pointer sortStyle">Tipo</th> -->
+                              <!-- <th width="50px" class="pointer sortStyle"></th> -->
+                              <th width="50px" class="pointer sortStyle">Realizado</th>
+                              <th width="50px" class="pointer sortStyle">Encaminhado</th>
+                              <!-- <th width="50px" class="pointer sortStyle">Ações</th> -->
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr ng-repeat="item in allProcedimentosDentes" data-id="{{item}}">
+                              <td title="">
+                                {{item.odontograma[0].dente}}
+                              </td>
+                              <td title="{{item.procNome[0].nome}}" class="">
+                                {{item.procNome[0].nome | limitTo:45}} </td>
+                              <td>
+                                <input type="checkbox" ng-model="item.realizado"
+                                  ng-click="openModalConfirmRealizado(item)"
+                                  ng-checked="{{item.realizado ? true : false}}" value="true" id="real+{{$index}}"
+                                  name="real+{{$index}}" ng-disabled="{{item.realizado ? true : false}}">
+                              </td>
+                              <td>
+                                <input type="radio" ng-click="encaminharProcedimento(item)"
+                                  ng-checked="{{item.proc.dentistaID == 0 ? false : true}}" id="enc+{{$index}}"
+                                  value="true" name="enc+{{$index}}" value="true"
+                                  ng-disabled="{{item.realizado == '1' ? true : false}}">
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div ng-if="listaProcedimentosEncaminhadosPlanoOdontologico.length > 0"
+                          style="margin-top: 60px;">
+                          <h4 class="text-center">
+                            Encaminhamentos
+                          </h4>
+                          <table class="table" id="tabelaListagemEncaminhamento">
+                            <thead>
+                              <tr>
+                                <th>
+                                  Dente
+                                </th>
+                                <th>
+                                  Categoria
+                                </th>
+                                <th>
+                                  Mensagem Retorno
+                                </th>
+                                <th>
+                                  Dentista*
+                                </th>
+                                <th>
+                                  Ações
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr
+                                ng-repeat="procedimento in listaProcedimentosEncaminhadosPlanoOdontologico track by $index">
+                                <td>
+                                  <b>
+                                    {{procedimento.odontograma[0].dente}}
+                                  </b>
+                                </td>
+                                <td>
+                                  <b>
+                                    {{procedimento.procNome[0].categoria}}
+                                  </b>
+                                </td>
+                                <td>
+                                  <input type="text" style="height: 0rem" id="msgRetorno+{{$index}}"
+                                    class="form-control" ng-model="procedimento.proc.descricao"
+                                    value={{procedimento.descricao}} placeholder="Mensagem para retorno">
+                                </td>
+                                <td>
+                                  <select class="form-control" id="Profissional"
+                                    ng-model="procedimento.proc.dentistaID">
+                                    <option ng-repeat="profissional in profissionais" value="{{profissional.id}}">
+                                      {{profissional.nome}}</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <button class="btn btn-success" id="btnConfirmEnc"
+                                    ng-click="salvarEncaminhamentoProcedimentos(procedimento)">
+                                    <i id="iconConfirmEnc" class="mdi mdi-check"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <br>
+                        <h4 class="text-center">
+                          Atualização
+                        </h4>
+                        <textarea rows="6" cols="40" style="width: 100%;"
+                          ng-model="atendimentoListaParamentros.atualizacaoAtendimento"
+                          placeholder="Deixe aqui sua atualização do atendimento">
+                        </textarea>
+                        <button style="font-size: 12px;" class="buttonNextStep col-2 btn btn-light mt-3"
+                          ng-click="salvarAtualizacaoAtendimento()">
+                          Salvar Atualização
+                        </button>
+                      </div>
+                      <!-- FIM VISÃO GERAL -->
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane planejamentos" id="planejamento-tab-content" role="tabpanel" aria-labelledby="home-tab" ng-controller="PlanejamentoController">
+                  <h4 class="card-title">Lista de Planejamentos Financeiros do paciente</h4>
+                  <div class="cabecalho">
+                    <p class="card-description" ng-if="planejamentos.length">Abaixo a lista de
+                      <code>planejamentos</code> já cadastrados.
+                    </p>
+                    <div class="row alert alert-fill-info" role="alert"
+                      ng-if="!planejamentos.length">
+                      Ainda não temos nada cadastrado :( 
+                    </div>
+                  </div>
+                  <pre class="d-none">
+                    {{planejamentos.length}}
+                  </pre>
+                  <div class="planejamentos-list">
+                    <div class="accordion accordion-filled" id="accordion-4" role="tablist">
+                      <div class="planejamento-item card" data-id="{{planejamento.planejamentoID}}" ng-repeat="planejamento in planejamentos | orderBy: '-dataAtendimento' track by $index " >
+                        
+                        <div class="card-header" role="tab" id="heading-10">
+                          <h6 class="mb-0">
+                            <a data-toggle="collapse" href="#collapse-financeiro-{{$index}}" onclick="return false;" ng-click="selecionarPlanejamento($event, planejamento)" aria-expanded="false" aria-controls="collapse-financeiro-{{$index}}" class="">
+                              <div class="badge badge-pill data">
+                                <i class="mdi mdi-calendar mr-2"></i>
+                                {{planejamento.dataAtendimento | date: 'dd/MM/yyyy'}} 
+                                <span class="hide">({{planejamento.planejamentoID}})</span>
+                              </div>
+                              <div class="badge dentista">{{planejamento.apelidoDoDentista}}</div>
+                              <div class="badge clinica">
+                                Clínica: {{planejamento.nomeDaClinica}} 
+                              </div>
+                              <div class="badge badge-pill status {{planejamento.statusColor}}">
+                                {{planejamento.statusLabel}}
+                              </div>
+                              <div class="badge badge-pill hide">
+                                ID: {{planejamento.planejamentoID}}
+                              </div>
+                            </a>
+                          </h6>
+                        </div>
+                        
+                        <div id="collapse-financeiro-{{$index}}"  class="planejamento-interno collapse" role="tabpanel" aria-labelledby="heading-10" data-parent="#accordion-4" >
+                          
+                          <div class="card-body">
+                            <table class="table planejamento-procedimentos" width='100%'>
+                              <col width='10%'>
+                              <col width='50%'>
+                              <col width='5%'>
+                              <col width='35%'>
+                              <tr>
+                                <th>Ativo:</th>
+                                <th>Procedimento:</th>
+                                <th>Valor:</th>
+                                <th>Dentista Executor:</th>
+                              </tr>
+                              <tr ng-repeat="procedimento in planejamentoSelecionado.procedimentos" ng-init="$last ? formatarCampoMonetario() : angular.noop()">
+                                <td>
+                                  <label class="toggle-switch toggle-switch-success">
+                                    <input type="checkbox" 
+                                            ng-model="procedimento.ativo"
+                                            ng-true-value="'sim'" 
+                                            ng-false-value="'nao'" 
+                                            ng-checked="{{procedimento.ativo=='sim'}}"
+                                            ng-click="atualizarProcedimentoAtivo(procedimento)"
+                                            ng-disabled="planejamentoSelecionado.status == 'aprovado'"
+                                    >
+                                    <span class="toggle-slider round"></span>
+                                    <span>
+                                      {{procedimento.ativo}}
+                                    </span>
+                                  </label>
+                                </td>
+                                <td>
+                                  <div class="categoria">{{procedimento.categoria}} |</div>
+                                  <div class="procedimento-nome">{{procedimento.nome}}</div>
+                                  <div class="tipo">Particular</div>
+                                </td>
+                                <td>
+                                  <input type="text" class="reais" 
+                                          ng-model="procedimento.valorBR" 
+                                          data-inputmask="'alias': 'currency'" 
+                                          data-inputmask-prefix="R$ " 
+                                          data-inputmask-groupSeparator="." 
+                                          data-inputmask-radixPoint="," 
+                                          data-inputmask-autoUnmask="true" 
+                                          ng-keyup="atualizarValorDoProcedimento(procedimento)"
+                                          ng-disabled="planejamentoSelecionado.status == 'aprovado'"
+                                  >
+                                </td>
+                                <td>
+                                  <div class="form-group">
+                                    <select class="form-control" 
+                                            ng-change="atualizarDentistaDoProcedimento(procedimento)" 
+                                            ng-model="procedimento.dentistaSelecionado" 
+                                            ng-options="dentista.apelido for dentista in comboDentistas.availableOptions track by dentista.id"
+                                            ng-disabled="planejamentoSelecionado.status == 'aprovado'"
+                                    >
+                                      <option value="">-- escolha um dentista --</option>
+                                    </select>
+                                  </div>
+                                </td>
+                              </tr>
+                            </table>
+                            
+                            <div class="row totais" ng-if="planejamentoSelecionado.procedimentos">
+                              <div class="resumo col-4">
+                                <label>Total Bruto</label>
+                                <h3 class="h5">{{totalBruto | currency:"R$ ":2}}</h3>
+                              </div>
+                              <div class="resumo col-4">
+                                <label>Total Líquido</label>
+                                <h3 class="h3">{{totalLiquido | currency:"R$ ":2}}</h3>
+                              </div>
+                              <div class="resumo desconto col-4">
+                                <label>Desconto</label>
+                                <h3>
+                                  <input type="text" class="porcentagem" ng-model="planejamentoSelecionado.desconto" ng-keyup="atualizarDesconto()" ng-disabled="planejamentoSelecionado.status == 'aprovado'"/>
+                                  <span>%</span>
+                                </h3>
+                              </div>
+                            </div>
+                            <div class="row chaves">
+                            
+                              <div class="col-2">
+                                <p class="mb-2">Aprovado</p>
+                                <span class="hide">-> {{parcelasPagas}}</span>
+                                <label class="toggle-switch">
+                                  <input type="checkbox" ng-true-value="'aprovado'" 
+                                        ng-false-value="'nao_aprovado'" 
+                                        ng-model="planejamentoSelecionado.status"
+                                        ng-change="atualizarStatusDeAprovacao()"
+                                        ng-disabled="parcelasPagas > 0"
+                                  >
+                                  <span class="toggle-slider round"></span>
+                                </label>                      
+                              </div>
+                            
+                              <div class="col-4" ng-if="planejamentoSelecionado.status=='aprovado'">
+                                <p class="mb-2">Parcelas</p>
+                                <button id="btnAdicionarParcela" class="btn btn-sm btn-primary" ng-disabled="parcelasPagas > 0" ng-click="adicionarParcela()">Adicionar parcela:</button>
+                                <span>{{parcelas.length}}x</span>
+                              </div>
+                            
+                              <div class="col-5" ng-if="planejamentoSelecionado.status=='aprovado'">
+                                <div class="grupoCheckbox">
+                                  <label for="">Recibo</label>
+                                  <div class="form-check">
+                                    <label class="form-check-label">
+                                      <input type="checkbox" class="form-check-input" 
+                                              ng-model="planejamentoSelecionado.recibo" 
+                                              ng-true-value="'true'"
+                                              ng-false-value="'false'"
+                                              ng-click="atualizarRecibo()">
+                                    <i class="input-helper"></i></label>
+                                  </div>
+                                </div>
+                                <div class="grupoCheckbox">
+                                  <label for="">Nota Fiscal</label>
+                                  <div class="form-check">
+                                    <label class="form-check-label">
+                                      <input type="checkbox" class="form-check-input" 
+                                              ng-model="planejamentoSelecionado.notaFiscal" 
+                                              ng-true-value="'true'"
+                                              ng-false-value="'false'"
+                                              ng-click="atualizarNotaFiscal()">
+                                    <i class="input-helper"></i></label>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div class="row aviso" ng-if="avisoSobreValor && planejamentoSelecionado.status=='aprovado' && parcelas.length>0">
+                              <div class="alert alert-danger">Valor das parcelas não bate com o valor líquido. A soma esta dando {{somaDasParcelas | currency : 'R$ '}}</div>
+                            </div>
+                            
+                            <div class="parcelas-item">
+                              <div class="item" ng-repeat="parcela in parcelas" ng-init="$last && formatarParcelas()" ng-mouseover="parcela.mostrarExcluir=true" ng-mouseleave="parcela.mostrarExcluir=false" >
+                                <div class="col-3 item-parte">
+                                  <label ng-if="$first">Forma de pagamento:</label>
+                                  <br ng-if="$first" />
+                                  <!-- <select class="form-control" ng-change="atualizarParcelaLazy(parcela)" ng-model="parcela.xxx"  ng-options="forma.nome for forma in formasDePagamento track by forma.id">
+                                    <option value="">-- escolha --</option>
+                                  </select> -->
+                                  <select class="form-control" data-forma="{{parcela.forma}}" ng-change="selecionarFormaDePagamento(parcela)" ng-model="parcela.forma" ng-disabled="parcela.pagamento">
+                                    <option value="">Selecione</option>
+                                    <option value="{{forma.id}}" ng-repeat="forma in formasDePagamento track by forma.id">{{forma.nome}}</option>
+                                  </select>
+                                  <span class="hide">
+                                    parcela.forma => {{parcela.forma}}
+                                    parcela.id  => {{parcela.id }}
+                                    !avisoSobreValor  => {{!avisoSobreValor }}
+                                    !parcela.pagamento => {{!parcela.pagamento}}
+                                    parcela.forma!=''  => {{parcela.forma!='' }}
+                                    parcela.forma!=''  => {{parcela.forma!=undefined }}
+                                    parcela.valorBR => {{parcela.valorBR}}
+
+                                  </span>
+                                </div>
+                                <div class="col-1 item-parte">
+                                  <label ng-if="$first">Parcela:</label>
+                                  <br ng-if="$first" />
+                                  <select ng-model="parcela.parcela_numero" class="form-control" ng-disabled="parcela.forma != 2 || parcela.pagamento" ng-change="selecionarNumeroDaParcela(parcela)">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                  </select>
+                                </div>
+                                <div class="col-3 item-parte">
+                                  <label ng-if="$first">Valor:</label>
+                                  <br ng-if="$first" />
+                                  <input class="form-control reais " type="text" 
+                                    data-inputmask="'alias': 'currency'" 
+                                    data-inputmask-prefix="R$ " 
+                                    data-inputmask-groupSeparator="." 
+                                    data-inputmask-radixPoint="," 
+                                    data-inputmask-autoUnmask="true" 
+                                    ng-model="parcela.valorBR" 
+                                    ng-change="mudancaDeValor()"
+                                    ng-disabled="parcela.pagamento"
+                                  >
+                                </div>
+                                <div class="col-2 item-parte">
+                                  <label ng-if="$first">Vencimento:</label>
+                                  <br ng-if="$first" />
+                                  <input class="form-control vencimento_campo" 
+                                    ng-model="parcela.vencimentoBR" 
+                                    data-inputmask="'alias': 'datetime'" 
+                                    data-inputmask-placeholder="_" 
+                                    data-inputmask-inputformat="dd/mm/yyyy" 
+                                    im-insert="false"
+                                    ng-disabled="parcela.pagamento"
+                                  >
+                                </div>
+                                <div class="col-3 item-parte">
+                                  <label ng-if="$first" >&nbsp;</label>
+                                  <br ng-if="$first" />
+                                  <i class="alerta-recebido mdi mdi-square-inc-cash"
+                                    ng-if="parcela.pagamento"
+                                    data-toggle="tooltip" 
+                                    data-placement="right"
+                                    onmouseenter="$(this).tooltip('show')"
+                                    title="" 
+                                    data-original-title="RECEBIDO">
+                                  </i>
+                                  <i class="alerta-vencido mdi mdi-alarm"
+                                    ng-if="parcela.jaVenceu && !parcela.pagamento"
+                                    data-toggle="tooltip" 
+                                    data-placement="right"
+                                    onmouseenter="$(this).tooltip('show')"
+                                    title="" 
+                                    data-original-title="VENCIDO">
+                                  </i>
+                                  <i class="alerta-aberto mdi mdi-alert-circle-outline"
+                                    ng-if="!parcela.jaVenceu && !parcela.pagamento"
+                                    data-toggle="tooltip" 
+                                    data-placement="right"
+                                    onmouseenter="$(this).tooltip('show')"
+                                    title="" 
+                                    data-original-title="EM ABERTO">
+                                  </i>
+                                  <button class="btn btn-sm btn-warning" 
+                                    ng-if="parcela.id && !avisoSobreValor && !parcela.pagamento && parcela.forma!='' && parcela.forma!=undefined && parcela.valorBR" 
+                                    ng-disabled="avisoSobreValor || parcela.pagamento" 
+                                    ng-click="receber(parcela)"
+                                  >
+                                    RECEBER
+                                  </button>
+                                  <button class="flutuante hide">-> {{parcela.id}} A {{parcela.forma}} B {{parcela.forma.length}} C {{parcela.forma==''}} E {{parcela.forma!=''}}</button>
+                                  <button class="btn btn-sm btn-danger" 
+                                    ng-if="parcela.mostrarExcluir && !parcela.pagamento && !($first && $last) && parcelasPagas == 0"
+                                    ng-click="removerParcela(parcela)"
+                                    ng-disabled="parcelasPagas > 0"
+                                  >X</button>
+                                  <button class="btn btn-sm btn-success hide" ng-if="parcela.mostrarExcluir" ng-click="salvarParcelaIndividual(parcela)">Salvar</button>
+                                </div>
+                              </div>
+                            </div>
+                          
+                            <div class="row">
+                              <div class="col-3" ng-if="planejamentoSelecionado.status=='aprovado' && parcelas.length>0">
+                                <p class="mb-2"></p>
+                                <button class="btn btn-sm btn-primary" ng-click="salvarParcelas()">Salvar parcelas</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-light mt-3" ng-click="voltar()">Voltar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-controller="AtendimentoController" class="modal fade" id="myModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body col-12">
+        <div>
+          Ao selecionar como realizado, esse item não poderá mais ser modificado.
+          Deseja continuar?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancelarRealizado">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-sm" id="confirmarRealizado">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div ng-controller="AtendimentoController" class="modal fade" id="modalExcluirDente" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body col-12">
+        <div>
+          Ao confirmar o dente será excluído.
+          Deseja continuar?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancelarExcluirDente">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-sm" id="confirmarExcluirDente">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-controller="PrescricaoController" class="modal fade" id="modalPrescricao" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document" ng-if="!cadastradoMedicamento && cadastradoPrescricao">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i ng-if="mostrartModelos" style="font-size: 20px;" class="mdi mdi-magnify"></i>
+        <i ng-if="!mostrartModelos" style="font-size: 20px;" class="mdi mdi-pencil-box-outline"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;;">
+          {{mostrartModelos ? 'Modelos de Prescrições' : 'Cadastrar Prescrição Médica'}}
+        </p>
+        <button type="button" class="close" ng-click="closeModalPrescricao()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body col-12" id="bodyModalPrescricao">
+        <form id="formPresc" name="formPresc">
+          <div ng-if="mostrartModelos">
+            <div class="item" ng-repeat="item in listaMergeModelos track by $index"
+              style="border-bottom: dotted 1px #0DDBB9; margin-top: 8px;">
+              <div class="col-12">
+                <div class="col-12 row">
+                  <div class="col-7">
+                    <strong>
+                      {{item.modelo.nomeModelo}}
+                    </strong>
+                  </div>
+                  <div class="col-5 text-left" style="margin-bottom: 8px; font-size: 15px;">
+                    <div class="btn btn-success btn-sm" ng-click="escolherModelo(item)">
+                      <i style="font-size: 20px;" class="mdi mdi-play"></i>
+                      Escolher
+                    </div>
+                    <div class="btn btn-danger btn-sm" ng-click="removerModelo(item)">
+                      <i style="font-size: 20px;" class="mdi mdi-delete"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modelosCadastrados" ng-if="item.medicamento.length > 0">
+                <div ng-repeat="item in item.medicamento" class="itensModelosCadastrados">
+                  <div class="col-12">
+                    <div class="col-12 row">
+                      <div class="">
+                        <strong>
+                          {{item.tipo_uso | uppercase}} - {{item.posologia}}
+                        </strong>
+                      </div>
+                    </div>
+                    <div class="col-12 row" id="itensMedicamentos">
+                      <div class="">
+                        <strong>
+                          {{item.nomeMedicamento | uppercase}}
+                        </strong>
+                      </div>
+                    </div>
+                    <div class="col-12 row" id="itensMedicamentos">
+                      <div class="">
+                        {{item.apresentacao | uppercase}}
+                      </div>
+                    </div>
+                    <div class="col-12 row" id="itensMedicamentos">
+                      <div class="">
+                        <strong>
+                          Duração: {{item.duracao | uppercase}}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div ng-if="!mostrartModelos">
+            <div class="col-12 row">
+              <div class="col-6">
+                <strong>
+                  Título da Prescrição <br>
+                </strong>
+                <input id="tituloPrescricao" name="titulo" class="form-control" value="Prescrição"
+                  ng-model="objetoPrescricao.titulo">
+                <div>
+                </div>
+              </div>
+              <div class="col-6">
+                <strong>
+                  Tipo <br>
+                </strong>
+                <label class="switch">
+                  <input type="checkbox" id="togBtn" ng-model="objetoPrescricao.tipo" ng-true-value="'especial'"
+                    ng-false-value="'simples'">
+                  <div class="slider round">
+                    <!--ADDED HTML -->
+                    <span class="on">Especial</span>
+                    <span class="off">Simples</span>
+                    <!--END-->
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="col-12 row" style="margin-top: 8px;">
+              <div class="col-6">
+                <strong>
+                  CID <br>
+                </strong>
+                <input id="nomeCid-10" name="cid-10" class="form-control" ng-model="objetoPrescricao.cid">
+              </div>
+              <div class="col-6">
+                <strong>
+                  Dentista (*) <br>
+                </strong>
+                <!-- <select class="form-control" id="Profissional" ng-model="procedimento.proc.dentistaID">
+                  <option ng-repeat="item in profissionais">
+                    {{item}}</option>
+                  </select> -->
+                <select class="form-control" style="height: 45px; margin-top: 2px; width: 215px;"
+                  ng-model="objetoPrescricao.dentistaID">
+                  <option ng-repeat="profissional in profissionais" value="{{profissional.id}}">
+                    {{profissional.nome}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12 text-right" style="margin-top: 8px;">
+              <button class="btn btn-success btn-sm" ng-click="adicionarMedicamento()">
+                <i class="mdi mdi-plus"></i>
+                Adicionar Medicamento (*)
+              </button>
+            </div>
+            <h5 class="text-center" style="margin-top: 8px;" ng-if="listaMedicamentosInseridos.length > 0">
+              <strong>Medicamentos Prescritos</strong>
+            </h5>
+            <div class="listaExamesSolicitados">
+              <div class="bs-example" id="accordionExample">
+                <div ng-repeat="item in listaMedicamentosInseridos track by $index">
+                  <div class="card">
+                    <div class="card-header" data-toggle="collapse" data-target="#collapseOne-{{$index}}"
+                      style="cursor: pointer;" id="headingOne-{{$index}}">
+                      <h2 class="mb-0">
+                        <button type="button" class="btn"><i class="fa fa-plus" style="margin-right: 10px;"></i>
+                          {{item.tipo_uso}} - {{item.posologia}}</button>
+                      </h2>
+                    </div>
+                    <div id="collapseOne-{{$index}}" class="collapse" aria-labelledby="headingOne-{{$index}}"
+                      data-parent="#accordionExample">
+                      <div class="card-body row">
+                        <div class="col-8">
+                          <p> {{item.obeservacao}} </p>
+                          <p> {{item.nomeMedicamento}} </p>
+                          <p> {{item.apresentacao}} </p>
+                          <p> Duração: {{item.duracao}} </p>
+                        </div>
+                        <div class="col-4">
+                          <button class="editarExamesSolicitados btn btn-secondary btn-sm"
+                            ng-click="editarMedicamento(item, $index)">
+                            <i class="mdi mdi-pencil"></i>
+                            Editar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="paiLista">
+              <div class="item" ng-repeat="item in listaMedicamentosInseridos track by $index"
+                style="border-top: solid 1px; margin-top: 20px; border-bottom: solid 1px;">
+                <a href="javascript:void(0)" class="buttonEditMidicamento btn btn-secondary btn-sm"
+                  ng-click="editarMedicamento(item, $index)">
+                  <i class="mdi mdi-plus"></i>
+                  Editar
+                </a>
+                <div class="col-12" style="font-weight: bold;">
+                  <div class="col-9">
+                    <div class="col-12 row">
+                      <div class="col-2">
+                        {{$index+1}}.
+                      </div>
+                      <div class="col-7" style="font-weight: bold">
+                        {{item.tipo_uso}} - {{item.posologia}}
+                      </div>
+                    </div>
+                    <div class="col-12 row" id="itensMedicamentos">
+                      <div class="col-2"></div>
+                      <div class="col-10" style="font-weight: bold">
+                        {{item.nomeMedicamento}}
+                      </div>
+                    </div>
+                    <div class="col-12 row" id="itensMedicamentos">
+                      <div class="col-2"></div>
+                      <div class="col-10">
+                        {{item.apresentacao}}
+                      </div>
+                    </div>
+                    <div class="col-12 row" id="itensMedicamentos">
+                      <div class="col-2"></div>
+                      <div class="col-10">
+                        Duração: {{item.duracao}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <div class="col-12" style="margin-top: 8px;">
+              <strong>
+                Recomendações <br>
+              </strong>
+              <textarea class="form-control" rows="4" cols="51" maxlength="300"
+                ng-model="objetoPrescricao.recomendacoes"></textarea>
+            </div>
+            <div class="row" style="margin: 12px;">
+              <label class="toggle-switch toggle-switch-success">
+                <input type="checkbox" id="salavarModelo" name="salvarModelo" ng-model="objetoPrescricao.modelo"
+                  ng-true-value="true" ng-false-value="false">
+                <span class="toggle-slider round"></span>
+              </label>
+              <div style="margin: 3px;">
+                <strong>
+                  Salvar modelo?
+                </strong>
+              </div>
+            </div>
+            <div class="col-6" ng-if="objetoPrescricao.modelo">
+              <strong>
+                Nome do Modelo (*)<br>
+              </strong>
+              <input id="nomeModelo" name="nomeModelo" class="form-control" ng-model="objetoPrescricao.nomeModelo"
+                ng-required="objetoPrescricao.modelo">
+              <div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer" style="margin: 10px;">
+            <button type="button" class="btn btn-secondary btn-sm" ng-click="closeModalPrescricao()">
+              <i class="mdi mdi-close"></i>
+              Fechar
+            </button>
+            <button ng-if="mostrartModelos" type="button" class="btn btn-primary btn-sm"
+              ng-click="criarNovaPrescricao(true)">
+              <i class="mdi mdi-play"></i>
+              Criar novo, não quero nenhum modelo
+            </button>
+            <button ng-if="!mostrartModelos" type="button" class="btn btn-primary btn-sm"
+              ng-click="visualizarPrescricao()">
+              <i class=" mdi mdi-play"></i>
+              Prosseguir
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-dialog modal-md" role="document" ng-if="cadastradoMedicamento && !cadastradoPrescricao">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-dots-vertical"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;;">
+          Dados do Medicamento
+        </p>
+        <button type="button" class="close" ng-click="closeModalMedicamento()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body col-12">
+        <form name="formMed" id="formMed">
+          <div class="row col-12">
+            <strong>
+              Uso (*)<br><br>
+            </strong>
+            <select class="form-control" id="exampleFormControlSelect1" ng-model="objetoMedicamento.tipo_uso">
+              <option disabled style="color: red;">Uso externo</option>
+              <option>Cutânea(Tópico)</option>
+              <option>Otológica</option>
+              <option>Nasal</option>
+              <option>Bochecho</option>
+              <option disabled></option>
+              <option disabled style="color: red;">Uso Interno</option>
+              <option selected>Oral</option>
+              <option>Bucal</option>
+              <option>Sublingual</option>
+              <option>GastroIntestinal</option>
+              <option disabled></option>
+              <option disabled style="color: red;">Uso Paranteal</option>
+              <option>Cutânea(...)</option>
+              <option>Injetavel</option>
+              <option disabled></option>
+            </select>
+          </div>
+          <div class="row col-12" style="margin-top: 12px;">
+            <strong>
+              Selecione o medicamento (*) <br><br>
+            </strong>
+            <input type="text" class="form-control" required ng-model="objetoMedicamento.nomeMedicamento">
+          </div>
+          <div class="row col-12" style="margin-top: 12px;">
+            <strong>
+              Apresentação <br><br>
+            </strong>
+            <input type="text" class="form-control" id="apresentacao" ng-model="objetoMedicamento.apresentacao">
+          </div>
+          <div class="row col-12">
+            <div class="row col-7" style="margin-top: 12px;">
+              <strong>
+                Posologia (*) <br><br>
+              </strong>
+              <input type="text" class="form-control" required ng-model="objetoMedicamento.posologia">
+            </div>
+            <div class="col-1"></div>
+            <div class="row col-4" style="margin-top: 12px;">
+              <strong>
+                Duração (*) <br><br>
+              </strong>
+              <input type="text" class="form-control" required ng-model="objetoMedicamento.duracao">
+            </div>
+          </div>
+          <div class="col-12" style="margin-top: 12px;">
+            <strong>
+              Descrição <br><br>
+            </strong>
+            <textarea class="form-control" rows="8" cols="60" maxlength="300"
+              ng-model="objetoMedicamento.descricao"></textarea>
+          </div>
+          <div class="modal-footer" style="margin: 10px;">
+            <button type="button" class="btn btn-secondary btn-sm" ng-click="closeModalMedicamento()">
+              <i class="mdi mdi-close"></i>
+              Fechar
+            </button>
+            <button ng-if="!flagBotaoEditarMedicamento" type="button" class="btn btn-primary btn-sm"
+              ng-click="incluirMedicamento()" ng-disabled="formMed.$invalid">
+              <i class="mdi mdi-plus-circle-outline"></i>
+              Incluir Medicamento
+            </button>
+            <button ng-if="flagBotaoEditarMedicamento" type="button" class="btn btn-primary btn-sm"
+              ng-click="salvarEdicaoMedicamento()" ng-disabled="formMed.$invalid">
+              <i class="mdi mdi-plus-circle-outline"></i>
+              Salvar Edição
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-dialog modal-md" role="document"
+    ng-if="confirmarPrescricao &&!cadastradoMedicamento && !cadastradoPrescricao">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-checkbox-multiple-marked"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;;">
+          Confirme os Dados de Prescrição
+        </p>
+        <button type="button" class="close text-left" ng-click="closeModalPrescricao()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body col-12" id="bodyModalPrescricao">
+        <div class="text-center" style="margin-top: -20px; margin-bottom: 20px;">
+          Depois de confirmar não será mais possível editar ou excluir. Clique em VOLTAR caso precise fazer mais algum
+          .
+        </div>
+        <div class="col-12" style="border: solid 1px black;">
+          <div class="text-center"><strong>{{objetoPrescricao.titulo}}</strong></div>
+          <div class="col-12" ng-repeat="item in listaMedicamentosInseridos track by $index" style="margin-top: 20px;">
+            <strong>
+              <div class="col-12 row" id="itensMedicamentos">
+                <div class="col-2">
+                  {{$index + 1}}.
+                </div>
+                <div class="col-10">
+                  {{item.tipo_uso}} - {{item.posologia}}
+                </div>
+              </div>
+              <div class="col-12 row" id="itensMedicamentos">
+                <div class="col-2"></div>
+                <div class="col-10">
+                  {{item.nomeMedicamento}}
+                </div>
+              </div>
+              <div class="col-12 row" id="itensMedicamentos">
+                <div class="col-2"></div>
+                <div class="col-10">
+                  {{item.apresentacao}}
+                </div>
+              </div>
+              <div class="col-12 row" id="itensMedicamentos">
+                <div class="col-2"></div>
+                <div class="col-10">
+                  Duração: {{item.duracao}}
+                </div>
+              </div>
+            </strong>
+          </div>
+        </div>
+        <div class="modal-footer" style="margin: 10px;" class="row">
+          <button type="button" class="btn btn-secondary btn-sm" ng-click="closeModalPrescricao()">
+            <i class="mdi mdi-close"></i>
+            Fechar
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" ng-click="voltarPrescricao()">
+            <i class="mdi mdi-chevron-double-left"></i>
+            Não, Voltar
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" ng-click="salvarPrescricao()">
+            <i class="mdi mdi-cloud-upload"></i>
+            Sim, Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" ng-controller="ExamesController" tabindex="-1" role="dialog" id="modalExames">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" ng-if="mostrarModelos">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-magnify"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;">
+          Modelos de Solicitações
+        </p>
+        <button type="button" class="close" ng-click="closeModalExames()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="item" ng-repeat="item in listaMergeModelos track by $index"
+          style="border-bottom: dotted 1px #0DDBB9; margin-top: 8px;">
+          <div class="col-12">
+            <div class="col-12 row">
+              <div class="col-7">
+                <strong>
+                  {{item.modelo.nomeModelo}}
+                </strong>
+              </div>
+              <div class="col-5 text-left" style="margin-bottom: 8px; font-size: 15px;">
+                <div class="btn btn-success btn-sm" ng-click="escolherModelo(item)">
+                  <i style="font-size: 20px;" class="mdi mdi-play"></i>
+                  Escolher
+                </div>
+                <div class="btn btn-danger btn-sm" ng-click="removerModelo(item)">
+                  <i style="font-size: 20px;" class="mdi mdi-delete"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modelosCadastrados" ng-if="item.exame.length > 0">
+            <div ng-repeat="item in item.exame" class="itensModelosCadastrados">
+              <div class="col-12">
+                <div class="col-12 row">
+                  <div class="">
+                    <strong>
+                      {{item.nome | uppercase}}
+                    </strong>
+                  </div>
+                </div>
+                <div class="col-12 row" id="itensMedicamentos">
+                  <div class="">
+                    <strong>
+                      {{item.obeservacao | uppercase}}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm" ng-click="cadastrarExames()">
+          <i class="mdi mdi-play"></i>
+          Criar novo, não quero nenhum modelo
+        </button>
+      </div>
+    </div>
+    <div class="modal-content" ng-if="cadastroExames">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-pencil"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;">
+          Solicitar Exames
+        </p>
+        <button type="button" class="close" ng-click="closeModalExames()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="formCadExame" name="formCadExame">
+          <div class="row col-12 marginInputExames">
+            <div class="col-6">
+              <strong>
+                Título da Solicitação <br>
+              </strong>
+              <input id="tituloSolicitacao" name="tituloSolicitacao" class="form-control"
+                ng-model="objetoCadExame.titulo">
+            </div>
+            <div class="col-6">
+              <strong>
+                Dentista (*) <br>
+              </strong>
+              <select class="form-control" required style="height: 45px; margin-top: 2px;"
+                ng-model="objetoCadExame.dentistaID">
+                <option ng-repeat="profissional in profissionais" value="{{profissional.id}}">
+                  {{profissional.nome}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 marginInputExames">
+            <strong>
+              CID <br>
+            </strong>
+            <input id="nomeCid-10" name="cid-10" class="form-control" ng-model="objetoCadExame.cid">
+          </div>
+          <div class="col-12 text-right" style="margin-top: 8px; margin-bottom: 8px;">
+            <button class="btn btn-success btn-sm" ng-click="adicionarExames()">
+              <i class="mdi mdi-plus"></i>
+              Adicionar Exames (*)
+            </button>
+          </div>
+          <h5 class="text-center marginInputExames" ng-if="listaExamesInseridos.length > 0">
+            <strong>Exames</strong>
+          </h5>
+          <div class="listaExamesSolicitados">
+            <div class="bs-example" id="accordionExample">
+              <div ng-repeat="item in listaExamesInseridos track by $index" id="itensExames">
+                <div class="card">
+                  <div class="card-header" data-toggle="collapse" data-target="#collapseOne-{{$index}}"
+                    style="cursor: pointer;" id="headingOne-{{$index}}">
+                    <h2 class="mb-0">
+                      <button type="button" class="btn"><i class="fa fa-plus" style="margin-right: 10px;"></i>
+                        {{item.nome}}</button>
+                    </h2>
+                  </div>
+                  <div id="collapseOne-{{$index}}" class="collapse" aria-labelledby="headingOne-{{$index}}"
+                    data-parent="#accordionExample">
+                    <div class="card-body row">
+                      <div class="col-8">
+                        <p>{{item.obeservacao}}</p>
+                      </div>
+                      <div class="col-4">
+                        <button class="editarExamesSolicitados btn btn-secondary btn-sm" ng-click="editarExame(item)">
+                          <i class="mdi mdi-pencil"></i>
+                          Editar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 marginInputExames" style="margin-top: 15px;">
+            <strong>
+              Recomendações <br>
+            </strong>
+            <textarea class="form-control" rows="4" cols="51" maxlength="300"
+              ng-model="objetoCadExame.recomendacoes"></textarea>
+          </div>
+          <div class="row salvarModelo" style="margin: 12px;">
+            <label class="toggle-switch toggle-switch-success">
+              <input type="checkbox" id="salavarModelo" ng-model="objetoCadExame.modelo" ng-true-value="true"
+                ng-false-value="false">
+              <span class="toggle-slider round"></span>
+            </label>
+            <div style="margin: 3px;">
+              <strong>
+                Salvar modelo?
+              </strong>
+            </div>
+          </div>
+          <div class="col-6" ng-if="objetoCadExame.modelo" id="salvarModelo">
+            <strong>
+              Nome do Modelo (*)<br>
+            </strong>
+            <input id="nomeModelo" name="nomeModelo" class="form-control" ng-model="objetoCadExame.nomeModelo"
+              ng-required="objetoCadExame.modelo" value="">
+            <div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm"
+          ng-disabled="formCadExame.$invalid || listaExamesInseridos.length <= 0" ng-click="prosseguir()">
+          <i class=" mdi mdi-play"></i>
+          Prosseguir
+        </button>
+      </div>
+    </div>
+    <div class="modal-content" ng-if="adicionarExame">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-plus-circle-outline"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;">
+          Dados do Exame
+        </p>
+        <button type="button" class="close" ng-click="closeModalIncluirExames()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form name="formExam" id="formExam">
+          <div class="col-12">
+            <strong>
+              Nome do Exame <br>
+            </strong>
+            <input id="nomeExames" name="nomeExames" class="form-control" ng-model="objetoExame.nome" required>
+          </div>
+          <div class="col-12">
+            <strong>
+              Observações <br>
+            </strong>
+            <input id="obeservacaoExames" name="obeservacaoExames" class="form-control"
+              ng-model="objetoExame.obeservacao">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-secondary" ng-click="cadastrarExames()">Close</button> -->
+        <button ng-if="incluirExameBtn" type="button" ng-disabled="formExam.$invalid" class="btn btn-primary"
+          ng-click="incluirExame()">Incluir
+          Exame</button>
+        <button ng-if="salvarInclusaoExameBtn" type="button" ng-disabled="formExam.$invalid" class="btn btn-primary"
+          ng-click="salvarInclusaoExame()">Salvar Edição</button>
+      </div>
+    </div>
+    <div class="modal-content" ng-if="visualizarSolicitacao" id="visualizarSolicitacaoExame">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-checkbox-multiple-marked"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;">
+          Confirme os Dados do Exame
+        </p>
+        <button type="button" class="close" ng-click="closeModalVisualizarExames()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mensagemVisualizacao">
+          Depois de confirmar não será mais possível editar ou excluir. Clique em VOLTAR caso precise fazer mais algum
+          .
+        </div>
+        <div class="col-12 container-visualizarExames">
+          <div class="text-center"><strong>{{objetoCadExame.titulo}}</strong></div>
+          <div class="col-12" ng-repeat="item in listaExamesInseridos track by $index" style="margin-top: 20px;">
+            <div class="col-12 item">
+              <div class="col-9">
+                <div class="col-12 row">
+                  <div class="col-2">
+                    {{$index+1}}.
+                  </div>
+                  <div class="col-7" style="font-weight: bold">
+                    {{item.nome}}
+                  </div>
+                </div>
+                <div class="col-12 row">
+                  <div class="col-2"></div>
+                  <div class="col-10">
+                    {{item.obeservacao}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" ng-click="closeModalVisualizarExames()">
+          <i class="mdi mdi-chevron-double-left"></i>
+          Não, Voltar
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" ng-click="salvarSolicitacaoExame()">
+          <i class="mdi mdi-cloud-upload"></i>
+          Sim, Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" ng-controller="AtestadoController" tabindex="-1" role="dialog" id="modalAtestado">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-pencil"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;">
+          Elaborar Atestado Odontológico
+        </p>
+        <button type="button" class="close" ng-click="closeAtestado()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="formAtestado" name="formAtestado">
+          <div class="col-12">
+            <input class="form-control" type="text" disabled value="{{Paciente.nome}} - CPF: {{Paciente.cpf}}" />
+          </div>
+          <br>
+          <div class="col-12">
+            <strong>Título do Atestado (*) <br> </strong>
+            <input required type="text" class="form-control" ng-model="objetoAtestado.titulo">
+          </div>
+          <br>
+          <div class="col-12">
+            <strong>
+              Atendimento (*)
+            </strong>
+            <input required ng-model="objetoAtestado.dataAtendimento" type="date" class="form-control">
+          </div>
+          <br>
+          <div class="col-12 row">
+            <div class="col-6">
+              <strong>
+                Início (*)
+              </strong>
+              <input required ng-model="objetoAtestado.hora_inicio" id="hora_inicio" type="text" class="form-control">
+            </div>
+            <div class="col-6">
+              <strong>
+                Término (*)
+              </strong>
+              <input required ng-model="objetoAtestado.hora_fim" id="hora_fim" type="text" class="form-control">
+            </div>
+          </div>
+          <br>
+          <div class="col-12 row">
+            <div class="col-6">
+              <strong>
+                Dentista (*)
+              </strong>
+              <select class="form-control" required style="height: 45px; margin-top: 2px; width: 215px;"
+                ng-model="objetoAtestado.dentistaId">
+                <option ng-repeat="profissional in profissionais" value="{{profissional.id}}">
+                  {{profissional.nome}}
+                </option>
+              </select>
+            </div>
+            <div class="col-6">
+              <strong>
+                Dispensa de Atividade (*)
+              </strong>
+              <select id="Atividade" class="form-control" required style="height: 45px; margin-top: 2px;"
+                ng-model="objetoAtestado.atividade">
+                <option>Profissionais</option>
+                <option>Desportivas</option>
+                <option>Escolares</option>
+                <option>Militares</option>
+                <option>Judiciais</option>
+              </select>
+            </div>
+          </div>
+          <br>
+          <div class="col-12 row">
+            <div class="col-4">
+              <strong>
+                Dias de Repouso (*)
+              </strong>
+              <input type="number" required class="form-control" min="0" ng-model="objetoAtestado.dias_repouso">
+            </div>
+            <div class="col-4">
+              <strong>
+                Emissão
+              </strong>
+              <input type="text" class="form-control" ng-model="objetoAtestado.data_emissao" disabled>
+            </div>
+            <div class="col-4">
+              <strong>
+                CID
+              </strong>
+              <input type="text" class="form-control" ng-model="objetoAtestado.cid">
+            </div>
+          </div>
+          <br>
+          <div class="col-12 hide">
+            <strong>
+              Texto (*)
+            </strong>
+            <textarea id="editor1" ng-model="objetoAtestado.texto"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" ng-click="closeAtestado()">
+          <i class="mdi mdi-close"></i>
+          Fechar
+        </button>
+        <button type="button" ng-disabled="formAtestado.$invalid" class="btn btn-secondary btn-sm"
+          ng-click="openModalMostrarTexto()">
+          <i class="mdi mdi-eye"></i>
+          Visualizar Texto
+        </button>
+        <button ng-disabled="formAtestado.$invalid" type="button" class="btn btn-primary btn-sm"
+          ng-click="cadastrarAtestado()">
+          <i class="mdi mdi-cloud-upload"></i>
+          Cadastrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" ng-controller="AtestadoController" tabindex="-1" role="dialog" id="modalAtestadoVisualizarTexto">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-magnify"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;">
+          Visualização do Texto
+        </p>
+        <button type="button" class="close" ng-click="closeModalMostrarTexto()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <textarea disabled id="editor2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="col-12 btn btn-secondary btn-sm" ng-click="closeModalMostrarTexto()">
+          <i class="mdi mdi-close"></i>
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" ng-controller="TimbradoController" id="modalTimbrado" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i style="font-size: 20px;" class="mdi mdi-pencil"></i>
+        <p style="font-size: 20px; margin-top: 3px; margin-left: 15px;">
+          Gerar Timbrado
+        </p>
+        <button type="button" class="close" ng-click="closeTimbrado()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-12" style="margin-bottom: 15px;">
+          <strong>Título <br> </strong>
+          <input required type="text" class="form-control" ng-model="objetoTimbrado.titulo">
+        </div>
+        <form id="formTimbrado" name="formTimbrado">
+          <div class="col-12">
+            <textarea id="editor3" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" ng-click="closeTimbrado()">
+          <i class="mdi mdi-close"></i>
+          Fechar
+        </button>
+        <button id="btnTimbrado" type="button" class="btn btn-primary btn-sm" ng-click="criarTimbrado()">
+          <i class="mdi mdi-cloud-upload"></i>
+          Cadastrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-controller="PdfController">
+  <div prescricao-template></div>
+</div>
+
+<div ng-controller="ExamesController" class="modal fade" id="removerModeloExames" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body col-12">
+        <div>
+          Confirmar exclusão desse modelo?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm"
+            ng-click="cancelarExcluirModeloExames()">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-sm" id="confirmarExcluirExamesModelo">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

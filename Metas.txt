@@ -1,0 +1,25 @@
+Metas
+1) Fazer entregas menores
+2) Calcular horas de cada funcionalidade(evitar perfeição)
+
+Novas planilhas
+1) APOIO
+2) entradas e saidas
+
+
+Mód - Financeiro - entradas e saídas	 R$  2 700,00 
+Mód - Financeiro - acerto	 R$  1 500,00 
+Mód - Financeiro - apoio	 R$  1 500,00 
+
+
+18
+10
+10
+total = 38 horas
+
+total em valor R$ 5.700
+
+
+Módulo de Apoio 
+- esta planejado em 15 horas de trabalho
+- esta planejado para 5 dias de trabalho(3h por dia)

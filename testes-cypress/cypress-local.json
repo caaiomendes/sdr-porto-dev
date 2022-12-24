@@ -1,0 +1,10 @@
+{
+    "projectId": "128076ed-9868-4e98-9cef-98dd8b705d75",
+    "env": {
+      "login_url": "http://127.0.0.1:1111/",
+      "user": "dentista1@sistema.com.br",
+      "password": "123",
+      "user_admin": "administrador@sistema.com.br",
+      "password_admin": "123"
+    }
+  }

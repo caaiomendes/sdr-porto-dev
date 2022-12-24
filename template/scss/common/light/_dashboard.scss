@@ -1,0 +1,114 @@
+.dashboard-link-btn-wrap {
+  list-style: none;
+  margin-bottom: 0;
+  padding-left: 0;
+  li {
+    display: inline-block;
+    margin-right: 1.25rem;
+    @media (max-width: 480px) {
+      margin-right: .3rem;
+      margin-top: .625rem;
+      margin-bottom: .625rem;
+    }
+    a {
+      color: $body-color;
+      font-size: .875rem;
+      font-weight: bold;
+      span {
+        background: $white;
+        border-radius:2px;
+        text-align: center;
+        padding: 3px;
+        margin-right: 5px;
+        ;
+      }
+      &:hover {
+        text-decoration: none;
+        color: theme-color(primary)
+      }
+    }
+  }
+}
+.total-analysis-position{
+  position: absolute;
+}
+.chart-visitors-legend {
+  .legend-label {
+    width: 12px;
+    height: 12px;
+    border-radius:100%;
+    border:2px solid $white;
+    display: inline-block;
+    background: #0ddbb9;
+  }
+  .row {
+    > .col:first-child {
+      border-right: 1px solid $border-color;
+      @media (max-width: 480px) {
+        border-right: none;
+        border-bottom: 1px solid $border-color;
+      }
+    }
+  }
+}
+.recent-earnings {
+    font-size: 2rem;
+    color: theme-color(primary);
+    margin-right: 1rem;
+    border-radius: 8px;
+    border: 1px solid $border-color;
+    padding: .625rem;
+}
+.dashboard-login {
+  .form-group {
+    margin-bottom: 1rem;
+    label {
+      font-size: 12px;
+    }
+    .form-control {
+      padding: .625rem;
+      @include placeholder {
+        color: $body-color;
+        font-size: 12px;
+      }
+    }
+  }
+  
+  .auth-link {
+    font-size: 12px;
+    color: $body-color;
+  }
+}
+.app-categories-legend {
+  .legend-label {
+    color: theme-color(dark);
+    font-weight: bold;
+    padding: 1rem 0;
+    border-top:1px solid $border-color;
+    span {
+      width: 15px;
+      height: 15px;
+      border-radius: 2px;
+      display: inline-block;
+      margin-right: 1rem;
+    }
+  }
+}
+.transaction-history-item {
+  padding: .625rem 0;
+  .transaction-history-brand {
+    width: 35px;
+    height: 35px;
+    padding-top: 8px;
+    border-radius: 100%;
+    text-align: center;
+    font-weight: bold;
+    margin-right: .625rem;
+  }
+}
+
+@each $color, $value in $theme-colors {
+  .transaction-history-brand-#{$color} {
+    @include transaction-history-brand-variations($value);
+  }
+}

@@ -1,0 +1,300 @@
+<div id="acertos" class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <div class="content" ng-if="!controles.mostrarClinicas">
+          <div class="row mb-4">
+            <h4 class="card-title">Acertos</h4>
+          </div>
+          <div class="row mb-4">
+            <div class="valores" ng-if="controles.profissionalSelecionado && (!profissionais.length == 0)">
+              <div class="badge badge-pill badge-primary">
+                <span class="texto">Particulares:</span>  
+                <span class="valor">{{acertos.ValorTotalParticular | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-primary">
+                <span class="texto">Convênios:</span>  
+                <span class="valor">{{acertos.ValorTotalConvenio | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-warning">
+                <span class="texto">Imposto Convênio:</span>  
+                <span class="valor">{{acertos.valorImposto | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-primary">
+                <span class="texto">Reembolsos:</span>  
+                <span class="valor">{{acertos.reembolsos.ValorTotal | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-danger">
+                <span class="texto">Descontos:</span>  
+                <span class="valor">{{acertos.descontos.ValorTotalDescontado | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>            
+              <div class="badge badge-pill badge-success">
+                <span class="texto">Total:</span>  
+                <span class="valor">{{acertos.ValorTotalResumo | currency : 'R$ '}} </span> 
+                <span class="moeda"></span> 
+              </div>
+              <br>  
+            </div>
+            <img class="logotipo" ng-src="{{imagem_clinica}}" width="120px" />
+            <div class="dados ml-2">
+              <h4 class="">Clinica: {{controles.clinicaSelecionada.nome}}</h4>
+              <button type="button" class="btn btn-icon-text btn-warning mt-2" ng-click="trocarDeClinica()">
+                <i class="mdi mdi-tooth btn-icon-prepend"></i>Escolher outra Clínica</button>
+              <br>
+              <div class="escolher-ano mt-4">
+                <input type="number" class="form-control mr-2" oninput="javascript: if (this.value.length > 2 ) this.value = this.value.slice(0, 2); if(this.value > 12 || this.value < 1) document.getElementById('botaoBuscar').setAttribute('disabled',true); else document.getElementById('botaoBuscar').removeAttribute('disabled')" min="1" max="12" ng-model="controles.mes">
+                <input type="number" class="form-control mr-2" oninput="javascript: if (this.value.length > 4 ) this.value = this.value.slice(0, 4); if(this.value > 2030 || this.value < 2000) document.getElementById('botaoBuscar').setAttribute('disabled',true); else document.getElementById('botaoBuscar').removeAttribute('disabled')" min="2000" max="2030" ng-model="controles.ano">
+                <button type="button" id="botaoBuscar" class="btn btn btn-primary mr-2" ng-click="buscar()">Buscar</button>
+              </div>
+              <br>
+            </div>
+          </div>
+            <div class="tab-pane fade show active" role="tabpanel"
+              aria-labelledby="home-tab">
+              <div class="row alert alert-fill-info" role="alert" ng-if="(objetos.length == 0 && objetos2.length == 0) || profissionais.length == 0">
+                <p>
+                Não encontramos resultados para esta busca :( 
+                </p>
+                <label class="badge badge-danger hide" >{{controles.ano}} - {{controles.mes}}</label>
+              </div>
+              <div ng-if="controles.profissionalSelecionado && profissionais.length != 0 ">
+                <div id="grupo-particular" class="card mt-3">
+                  <div class="particular card-body">
+                    <h4 class="card-title badge badge-pill status badge-success">Particulares</h4>
+                      <div ng-if="acertos.particulares.length > 0" class="tabela tabela1">
+                          <table class="table table-striped table-hover">
+                              <thead class="thead-dark">
+                                <tr>
+                                  <th scope="col">Nome Paciente</th>
+                                  <th scope="col">Procedimento</th>
+                                  <th scope="col">Forma de Pagamento</th>
+                                  <th scope="col">Valor Procedimento</th>
+                                  <th scope="col">Comissão</th>
+                                  <th scope="col">Valor</th>
+                                  <th scope="col">Observações</th>
+                                </tr>
+                              </thead>
+                              <tbody>  
+                                <tr ng-repeat="item in acertos.particulares">
+                                  <td
+                                  data-toggle="tooltip" 
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomePaciente}}" 
+                                  >{{item.nomePaciente | limitTo: 20}} {{item.nomePaciente.length > 20? '...' : ''}}</td>
+                                  <td
+                                  ng-if="!item.nomeProc" data-toggle="tooltip"
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.procedimentoID}}" 
+                                  >{{item.procedimentoID | limitTo: 20}} {{item.procedimentoID.length > 20? '...' : ''}}</td>
+                                  <td
+                                  ng-if="item.nomeProc" data-toggle="tooltip"
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomeProc}}" 
+                                  >{{item.nomeProc | limitTo: 20}} {{item.nomeProc.length > 20? '...' : ''}}</td>
+                                  <td>{{item.forma}}</td>
+                                  <td>{{item.valorProcedimento | currency : 'R$ ' }} </td>
+                                  <td>{{item.comissao}}%</td>
+                                  <td>{{item.valor | currency : 'R$ '}}</td>
+                                  <td>{{item.observacoes}}</td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>Total Pago</th>
+                                  <td></td>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalProcParticular | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalParticular | currency : 'R$ '}}</th>
+                                  <td></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                            <!-- <pre>
+                              {{lst | json}}
+                            </pre> -->
+                      </div>
+                    <!-- </div> -->
+                    <div class="row alert alert-fill-info" role="alert" ng-if="acertos.particulares.length <= 0">
+                      Não encontramos procedimentos particulares...
+                    </div>
+                  </div>
+                </div>
+                <div id="grupo-convenio" class="card mt-3">
+                  <div class="convenio card-body">  
+                    <h4 class="card-title badge badge-pill status badge-success">Convênio</h4>
+                      <div class="tabela tabela2">
+                          <table ng-if="acertos.convenio.length > 0" class="table table-striped table-hover">
+                              <thead class="thead-dark">
+                                <tr>
+                                  <th scope="col">Nome Paciente</th>
+                                  <th scope="col">Procedimento</th>
+                                  <th scope="col">Convênio</th>
+                                  <th scope="col">Número da Guia</th>
+                                  <th scope="col">Valor do Procedimento</th>
+                                  <th scope="col">Comissão</th>
+                                  <th scope="col">Valor</th>
+                                  <th scope="col">Glosas</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-if="item.status != 'Glosado'" ng-repeat="item in acertos.convenio">
+                                  <td
+                                  data-toggle="tooltip" 
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomePaciente}}" 
+                                  >{{item.nomePaciente | limitTo: 20}} {{item.nomePaciente.length > 20? '...' : ''}}</td>
+                                  <td
+                                  data-toggle="tooltip"
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomeProc}}" 
+                                  >{{item.nomeProc | limitTo: 20}} {{item.nomeProc.length > 20? '...' : ''}}</td>
+                                  <td>{{item.convenio}}</td>
+                                  <td>{{item.numeroGuia}}</td>
+                                  <td>{{item.valorProcedimento | currency : 'R$ ' }}</td>
+                                  <td>{{item.comissao}}%</td>
+                                  <td>{{item.valor | currency : 'R$ '}}</td>
+                                  <td> {{item.glosas}}</td>
+                                </tr>
+                                <tr class="table-danger" ng-if="item.status == 'Glosado'" ng-repeat="item in acertos.convenio">
+                                  <td
+                                  data-toggle="tooltip" 
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomePaciente}}" 
+                                  >{{item.nomePaciente | limitTo: 20}} {{item.nomePaciente.length > 20? '...' : ''}}</td>
+                                  <td
+                                  data-toggle="tooltip"
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomeProc}}" 
+                                  >{{item.nomeProc | limitTo: 20}} {{item.nomeProc.length > 20? '...' : ''}}</td>
+                                  <td>{{item.convenio}}</td>
+                                  <td>{{item.numeroGuia}}</td>
+                                  <td>{{item.valorProcedimento | currency : 'R$ '}}</td>
+                                  <td>{{item.comissao}}%</td>
+                                  <td>{{item.valor | currency : 'R$ ' }}</td>
+                                  <td>{{item.glosas}}</td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>Total Pago</th>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalProcConvenio | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalConvenio | currency : 'R$ '}}</th>
+                                  <td></td>
+                                </tr>
+                                <tr class="table-danger">
+                                  <th>Total Glosado</th>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalProcGlosados | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalGlosados | currency : 'R$ '}}</th>
+                                  <td></td>
+                                </tr>
+                              </tfoot>
+                          </table>
+                      </div>
+                    <!-- </div> -->
+                    <div class="row alert alert-fill-info" role="alert" ng-if="acertos.convenio.length <= 0">
+                      Não encontramos procedimentos do tipo convênio...
+                    </div>
+                  </div>
+                </div>
+                <div id="grupo-reembolso" class="card mt-3">
+                  <div class="convenio card-body">  
+                    <h4 class="card-title badge badge-pill status badge-success">Reembolsos</h4>
+                      <div ng-if="acertos.reembolsos.length > 0" class="tabela tabela2">
+                          <table class="table table-striped table-hover">
+                              <thead class="thead-dark">
+                                <tr>
+                                  <th scope="col">Motivo</th>
+                                  <th scope="col">Valor</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-repeat="item in acertos.reembolsos">
+                                  <td>{{item.motivo}}</td>
+                                  <td>{{item.valor | currency : 'R$ '}}</td>                               
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>Total</th>
+                                  <th>{{acertos.reembolsos.ValorTotal | currency : 'R$ '}}</th>
+                                </tr>
+                              </tfoot>
+                          </table>
+              
+                      </div>
+                    <!-- </div> -->
+                    <div class="row alert alert-fill-info" role="alert" ng-if="acertos.reembolsos.length <= 0">
+                      Não encontramos reembolsos...
+                    </div>
+                  </div>
+                </div>
+                <div id="grupo-descontos" class="card mt-3">
+                  <div class="convenio card-body">  
+                    <h4 class="card-title badge badge-pill status badge-success">Descontos</h4>
+                      <div class="tabela tabela2">
+                          <table ng-if="acertos.descontos.length > 0" class="table table-striped table-hover">
+                              <thead class="thead-dark">
+                                <tr>
+                                  <th scope="col">Nome</th>
+                                  <th scope="col">Motivo</th>
+                                  <th scope="col">Valor do Desconto</th>
+                                  <th scope="col">Comissão</th>
+                                  <th scope="col">Valor Descontado</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-repeat="item in acertos.descontos">
+                                  <td>{{item.nome}}</td>
+                                  <td>{{item.motivo}}</td>
+                                  <td>{{item.valor | currency : 'R$ '}}</td>
+                                  <td>{{item.comissao}} %</td>
+                                  <td>{{item.valorDescontado | currency : 'R$ '}}</td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>Total Pago</th>
+                                  <td></td>
+                                  <th>{{acertos.descontos.ValorTotal | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <th>{{acertos.descontos.ValorTotalDescontado | currency : 'R$ '}}</th>
+                                </tr>
+                              </tfoot>
+                          </table>
+              
+                      </div>
+                    <!-- </div> -->
+                    <div class="row alert alert-fill-info" role="alert" ng-if="acertos.descontos.length <= 0">
+                      Não encontramos descontos...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="content" ng-if="controles.mostrarClinicas">
+          <escolha-clinica class="clinicas-escolha" origem="acertos" ></escolha-clinica>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

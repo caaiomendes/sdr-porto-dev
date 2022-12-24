@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Index</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="vendors/feather/feather.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <link rel="stylesheet" href="vendors/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.css">
+  <link rel="stylesheet" href="vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="vendors/jquery-toast-plugin/jquery.toast.min.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+  <!-- plugin css for this page -->
+  <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+  <link rel="stylesheet" href="vendors/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="vendors/jquery-toast-plugin/jquery.toast.min.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/vertical-layout-light/style.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+</head>
+<body class="sidebar-dark" ng-app="principal" ng-controller="GeralController">
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="navbar-brand-wrapper d-flex align-items-center justify-content-between">
+        <a class="navbar-brand brand-logo" href="#clinicas">
+          <img src="images/logo.jpg" alt="logo"/>
+        </a>
+        <a class="navbar-brand brand-logo-mini" href="#clinicas">
+          <h1 class="destaque1">D<span class="destaque">R</span></h1></a>
+        </a>
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <img src="images/sidebar/menu.svg" alt="" class="">
+        </button>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item dropdown">
+            <a class="nav-link  dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown"
+            href="javascript:void(0)" ng-click="limparAviso()" data-toggle="dropdown">
+            <img src="images/chat/logo-29x36.png">
+            <span class="temMensagem" ng-if="temMensagem"></span>
+            </a>
+            <div id="chat" class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+              aria-labelledby="messageDropdown">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">Profissionais</p>
+              <a ng-repeat="user in profissionais" data-chat-nome="{{user.nome}}" class="dropdown-item preview-item" ng-click="chatUser(user, $event)">
+                <span class="temMensagem" style="display: none;"></span>
+                <div class="preview-thumbnail">
+                  <img ng-if="user.foto" ng-src="{{barramento}}/upload/{{user.foto}}" alt="image" class="profile-pic">
+                  <img ng-if="!user.foto" src="images/faces/face33.png" alt="image" class="profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow">
+                  <h6 class="preview-subject ellipsis font-weight-normal">{{user.apelido}}
+                  </h6>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown" id="profileDropdown-navbar">
+              <img ng-if="objeto.foto" ng-src="{{barramento}}/upload/{{objeto.foto}}" alt="profile"/>
+              <img ng-if="!objeto.foto" src="images/faces/face33.png" alt="profile"/>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown-navbar">
+              <a class="dropdown-item" ng-click="modalDeTrocarSenha()">
+                <i class="mdi mdi-settings text-primary"></i>
+                Mudar senha
+              </a>
+              <a class="dropdown-item" ng-click="logout()">
+                <i class="mdi mdi-logout text-primary"></i>
+                Logout
+              </a>
+            </div>
+          </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <img src="images/sidebar/menu.svg" alt="" class="">
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial -->
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item nav-profile dropdown">
+            <div>
+                <a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown" id="profileDropdown" aria-expanded="false">
+                  <div class="d-flex">
+                      <img ng-if="objeto.foto" ng-src="{{barramento}}/upload/{{objeto.foto}}" alt="profile">
+                      <img ng-if="!objeto.foto" src="images/faces/face32.png" alt="profile">
+                      <div>
+                        <span class="sidebar-profile-name font-weight-bold" ng-bind="objeto.nome"></span>
+                        <p class="sidebar-profile-designation text-muted text-small" ng-bind="objeto.tipo"></p>
+                      </div>
+                  </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                  <a class="dropdown-item">
+                    <i class="mdi mdi-settings text-primary"></i>
+                    Settings
+                  </a>
+                  <a class="dropdown-item" ng-click="logout()">
+                    <i class="mdi mdi-logout text-primary"></i>
+                    Logout
+                  </a>
+                </div>
+              </div>
+          </li>
+          <li class="nav-item">
+            <div class="sidebar-menu-title">
+                <i class="mdi mdi-home mdi-24px mr-3 text-success"></i>
+                <a class="inicio" href="#inicio">
+                  <span>Início</span>
+                </a>
+                
+            </div>
+          </li>
+          <li class="nav-item">
+            <div class="sidebar-menu-title">
+                <i class="mdi mdi-settings mdi-24px mr-3 text-success"></i>
+                <span>Gerenciamentos</span>
+            </div>
+            <ul class="nav submenu-wrapper">
+              <li class="nav-item" ng-class="{ active: isActive('/clinicas') }">
+                <a class="nav-link" href="#clinicas" data-toggle="offcanvas">
+                  <span class="menu-title">Clínicas</span>
+                </a>
+              </li>
+              <li class="nav-item" ng-class="{ active: isActive('/profissionais') }">
+                <a class="nav-link" href="#profissionais" data-toggle="offcanvas">
+                  <span class="menu-title">Profissionais</span>
+                </a>
+              </li>
+              <li class="nav-item" ng-class="{ active: isActive('/encaminhamentos') }">
+                <a class="nav-link" href="#encaminhamentos" data-toggle="offcanvas">
+                  <span class="menu-title">Encaminhamentos</span>
+                </a>
+              </li>
+              <li class="nav-item" ng-class="{ active: isActive('/pacientes') }">
+                <a class="nav-link" href="#pacientes" data-toggle="offcanvas">
+                  <span class="menu-title">Pacientes</span>
+                </a>
+              </li>
+              <li class="nav-item" ng-class="{ active: isActive('/estoque') }">
+                <a class="nav-link" href="#estoque" data-toggle="offcanvas">
+                  <span class="menu-title">Estoque</span>
+                </a>
+              </li>
+              <li class="nav-item" ng-class="{ active: isActive('/caixas') }">
+                <span class="nav-link" data-toggle="collapse" data-target="#menu-caixas">
+                  <span class="menu-title">Caixas</span>
+                  <i class="menu-arrow"></i>
+                </span>
+                <div class="collapse" id="menu-caixas">
+                  <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="#apoio">Lançamentos Diários</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="#entradas-saidas">Financeiro</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="#admin-acertos">Acertos</a></li>
+                  </ul>
+                </div>  
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel"> 
+        <div class="content-wrapper">
+          <div class="palco">
+            <div class="loading-wrapper" loading>
+              <div class="loading"></div>
+              <div class="overlay2"></div>
+            </div>
+
+            <div class="chat-panel" ng-show="$storage.is_chatting" ng-controller="ChatController as chat" style="position: absolute; width: 300px; right: 30px; box-shadow: 0px 3px 21px 0px rgb(0 0 0 / 20%); z-index: 300;">
+              <div class="chat-panel-header bg-primary" style="padding: 14px 22px; color: white; font-weight: bold;">
+                <span class="chat-panel-title" data-chat-sender="{{$storage.chat_user.apelido}}">Conversa com: {{ $storage.chat_user.apelido | limitTo: 15}}{{$storage.chat_user.apelido.length > 15 ? '...' : ''}}</span>
+                <span class="fa fa-times" style="float: right;" ng-click="closeChat()"></span>
+              </div>
+              <div id="chat-panel-body" class="chat-panel-body bg-white" scroll-glue force-glue style="padding: 7px 12px; max-height: 50vh; overflow-y: auto;">
+                <div class="comments" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                    <div class="comment" ng-repeat="message in chat.messages" style="padding: 7px 12px;">
+                        
+                      <!-- sender -->
+                      <div ng-if="message.username == username && message.receiver == receiver" style="display: flex; flex-direction: row; justify-content: flex-end;">                            
+                        <div class="content" style="display:flex; flex-direction:column; justify-content:space-between; padding:0px 12px; color:#6c7293">
+                            <div class="metadata">
+                                <p><span class="author"><strong>{{ message.sender_apelido }}</strong></span></p>
+                                <div class="date" am-time-ago="message.created_at | amUtc | amLocal" style="font-size: small;"></div>
+                            </div>
+                            <div class="text bg-info" style="padding: 5px 10px; border-radius: 10px; color: #212529;">
+                                <b>{{ message.message }}</b>
+                            </div>
+                        </div>
+                        <div class="avatar">
+                          <img ng-src="{{ $storage.destin_foto }}" width="35px" style="border-radius: 50%;">
+                        </div>
+                      </div>
+
+                      <div ng-if="message.username == receiver && message.receiver == username" style="display: flex; flex-direction: row; justify-content: flex-start;">                            
+                        <div class="avatar">
+                          <img ng-src="{{ $storage.caller_foto }}" width="35px" style="border-radius: 50%;">
+                        </div>
+                        <div class="content" style="display:flex; flex-direction:column; justify-content:space-between; padding:0px 12px; color:#6c7293">
+                          <div class="metadata">
+                            <p><span class="author"><strong>{{ message.sender_apelido }}</strong></span></p>
+                            <div class="date" am-time-ago="message.created_at | amUtc | amLocal" style="font-size: smaller;"></div>
+                          </div>
+                          <div class="text bg-primary" style="padding:5px 10px; border-radius:10px; color:white;">
+                              <b>{{ message.message }}</b>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                </div>
+
+              </div>
+              <div class="chat-panel-footer bg-white" style="padding: 7px 12px">
+                <form ng-submit="chat.sendMessage()" ng-cloak>
+                  <div class="input-group">
+                    <input class="form-control" placeholder="Escreva uma mensagem..." ng-model="chat.message" required focus-on="messageReady">
+                      <span class="input-group-append">
+                        <button class="btn btn-primary"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                      </span>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <ng-view></ng-view>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2022 <a href="https://www.pwms.com.br/" target="_blank">PWMS</a>. All rights reserved.</span>
+          </div>
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+
+  <!-- base:js -->
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <script src="vendors/sweetalert/sweetalert.min.js"></script>
+  <script src="vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script> 
+  <script src="vendors/inputmask/jquery.inputmask.bundle.js"></script>
+  <script src="vendors/inputmask/inputmask.binding.js"></script>
+  <script src="vendors/moment/moment.min.js"></script>
+  <script src="vendors/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.js"></script>
+  <script src="vendors/jquery-toast-plugin/jquery.toast.min.js"></script>
+  
+  <script src="js/template/template.js"></script>
+  <script src="js/template/off-canvas.js"></script>
+  <script src="js/template/hoverable-collapse.js"></script>
+  <script src="js/template/jq.tablesort.js"></script>
+  <script src="js/template/file-upload.js"></script>
+  <script src="js/template/toastDemo.js"></script>
+
+  <script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+  <!-- JS VENDOR -->
+  <!-- jquery - ja tem o 3.4.1 (eu usava v2.1.4)-->
+  <!-- <script src="javascript/vendors/jquery/jquery.min.js"></script> -->
+  <!-- bootstrap - ja tem o 4.3.1 (eu usava v3.3.4)-->
+  <!-- <script src="javascript/vendors/bootstrap/bootstrap.min.js"></script> -->
+  
+  <script src="js/vendors/angular/angular-1.5.8.js"></script>
+  <script src="js/vendors/ng-storage/ngStorage.js"></script>
+  <script src="js/vendors/angular/angular-route.min.js"></script>
+  <script src="vendors/twbs-pagination/jquery.twbsPagination.min.js"></script>
+  <script src='js/vendors/pusher-js/dist/web/pusher.js'></script>
+  <script src='js/vendors/pusher-angular/lib/pusher-angular.js'></script>
+  <script src="js/vendors/scrollglue.js"></script>
+  <script src="vendors/jquery-toast-plugin/jquery.toast.min.js"></script>
+  <script src="js/vendors/angular-locale_pt-br.min.js"></script>
+
+  <!-- JS MINE -->
+  <script src="js/app/app.js"></script>
+  <script src="js/app/config.js"></script>
+  <script src="js/app/routes.js"></script>
+  <script src="js/app/filters/filters.js"></script>
+
+  <!-- MODULES -->
+  <script src="js/app/controllers/chat-controller.js"></script>
+  <script src="js/app/services/channel-service.js"></script>
+  <script src="js/app/services/atestado-service.js"></script>
+  <script src="js/app/controllers/pdf-controller.js"></script>
+  <script src="js/app/controllers/geral-controller.js"></script>
+  <script src="js/app/controllers/clinica-controller.js"></script>
+  <script src="js/app/services/clinica-service.js"></script>
+  <script src="js/app/controllers/profissional-controller.js"></script>
+  <script src="js/app/services/profissional-service.js"></script>
+  <script src="js/app/services/login-service.js"></script>
+  <script src="js/app/services/atendimento-service.js"></script>
+  <script src="js/app/controllers/procedimento-controller.js"></script>
+  <script src="js/app/services/procedimento-service.js"></script>
+  <script src="js/app/controllers/paciente-controller.js"></script>
+  <script src="js/app/services/paciente-service.js"></script>
+  <script src="js/app/diretivas/cpf-validator.js"></script>
+  <script src="js/app/services/anamnese-service.js"></script>
+  <script src="js/app/controllers/anamnese-controller.js"></script>
+  <script src="js/app/services/historico-service.js"></script>
+  <script src="js/app/services/arquivo-service.js"></script>
+  <script src="js/app/controllers/prescricao-controller.js"></script>
+  <script src="js/app/controllers/arquivo-controller.js"></script>
+  <script src="js/app/services/agendamento-service.js"></script>
+  <script src="js/app/controllers/historico-controller.js"></script>
+  <script src="js/app/controllers/atendimento-controller.js"></script>
+  <script src="js/app/utils/utils-functions.js"></script>
+  <script src="js/app/diretivas/global-directive.js"></script>
+  <script src="js/app/services/prescricao-service.js"></script>
+  <script src="js/app/services/medicamento-service.js"></script>
+  <script src="js/app/controllers/exames-controller.js"></script>
+  <script src="js/app/services/solicitacao-exame-service.js"></script>
+  <script src="js/app/services/exame-service.js"></script>
+  <script src="js/app/controllers/atestado-controller.js"></script>
+  <script src="js/app/controllers/timbrado-controller.js"></script>
+  <script src="js/app/controllers/menu-historico-controller.js"></script>
+  <script src="js/app/services/timbrado-service.js"></script>
+  <script src="js/app/services/salas-service.js"></script>
+  <script src="js/app/services/aux-clinica-profissional-service.js"></script>
+  <script src="js/app/controllers/arquivo-clinica-controller.js"></script>
+  <script src="js/app/controllers/encaminhamento-controller.js"></script>
+  <script src="js/app/services/encaminhamento-service.js"></script>
+  <script src="js/app/services/arquivo-clinica-service.js"></script>
+  <script src="js/app/services/sala-horario-service.js"></script>
+  <script src="js/app/controllers/planejamento-controller.js"></script>
+  <script src="js/app/services/planejamento-service.js"></script>
+  <script src="js/app/controllers/selecionar-clinica-controller.js"></script>
+  <script src="js/app/utils/utils-dados.js"></script>
+  <script src="js/app/controllers/apoio-controller.js"></script>
+  <script src="js/app/services/apoio-service.js"></script>
+  <script src="js/app/controllers/entradas-saidas-controller.js"></script>
+  <script src="js/app/services/entradas-saidas-service.js"></script>
+  <script src="js/app/controllers/acertos-controller.js"></script>
+  <script src="js/app/services/acertos-service.js"></script>
+  <script src="js/app/services/estoque-service.js"></script>
+  <script src="js/app/controllers/estoque-controller.js"></script>
+
+</body>
+
+</html>
+

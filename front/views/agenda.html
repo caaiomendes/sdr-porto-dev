@@ -1,0 +1,290 @@
+<div id="agenda">
+  <!-- <div class="container"> -->
+  <div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <ul class="nav nav-tabs" role="tablist" ng-show="!flagEditando">
+            <li class="nav-item" ng-repeat="item in abas">
+              <a class="nav-link active salasClinica" id="tabs-{{$index}}" href="javascript:void(0)" data-toggle="tab-{{$index}}"
+                role="tab-{{$index}}" aria-controls="home-1-{{$index}}" aria-selected="item.select"
+                ng-style="{ 'backgroundColor': getBoxBackgroundColor(item.cor) }"
+                ng-click="selecionarSala(item, $index)">{{item.nome}}</a>
+            </li>
+          </ul>
+          <div class="row" id="tabela" ng-show="!flagEditando">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <button id="novo" type="button" class="btn btn-primary btn-rounded" ng-click="novo(true)">+</button>
+                  <h4 class="card-title">Agenda da Clínica</h4>
+                  <img class="logo-clinica" ng-src="{{barramento}}/upload/{{objeto.clinica.logo}}" alt="">
+                  <div id="calendar" class="full-calendar"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" id="incalt" ng-show="flagEditando">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Agendamento</h4>
+                  <p class="card-description">
+                    Inclusão ou alteração de agenda
+                  </p>
+                  <form class="forms-sample" name="form" id="form" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                      <!-- <div class="col-md-12 validador" ng-if="form.cpf.$valid && !objeto.id">
+                      <div class="form-group">
+                        <a href="javascript:void(0)" class="validar btn btn-success"  ng-click="validarUsuarioExistente()">verificar cliente</a>
+                      </div>
+                    </div> -->
+                      <!-- <div class="col-md-3 cpf">
+                    <div class="form-group" ng-class="{'has-danger' : form.cpf.$error.cpf} ">
+                      <label for="cpf">CPF (*)</label>
+                      <input type="text" name="cpf" id="cpf" ng-class="{'has-success' : form.cpf.$valid } "
+                        class="form-control" ng-model="objeto.cpf" placeholder="CPF" ng-disabled="objeto.id"
+                        ng-pattern="/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/" cpf-validator>
+                    </div>
+                    <input type="hidden" ng-model="objeto.pacienteID" />
+                    <input type="hidden" ng-model="objeto.cpfFormatado" />
+                  </div> -->
+                      <div class="col-md-6 nome">
+                        <div class="form-group">
+                          <label for="nome">Nome (*)</label>
+                          <input id="nome" name="nome" type="text" class="form-control" ng-model="objeto.nome"
+                            ng-disabled="objeto.id || objeto.flagBloquear" placeholder="Nome" required>
+                        </div>
+                      </div>
+                      <div class="col-md-3 situacao">
+                        <div class="form-group">
+                          <div class="form-check form-check-success">
+                            <label class="form-check-label">
+                              <input type="radio" class="form-check-input" name="radio" id="radio" checked=""
+                                ng-model="objeto.situacao" value="agendado">
+                              Agendado
+                              <i class="input-helper"></i></label>
+                          </div>
+                          <div class="form-check form-check-success">
+                            <label class="form-check-label">
+                              <input type="radio" class="form-check-input" name="radio" id="radio1" checked=""
+                                ng-model="objeto.situacao" value="chegada">
+                              Chegada
+                              <i class="input-helper"></i></label>
+                          </div>
+                          <div class="form-check form-check-success">
+                            <label class="form-check-label">
+                              <input type="radio" class="form-check-input" name="radio" id="radio2" checked=""
+                                ng-model="objeto.situacao" value="em atendimento">
+                              Em atendimento
+                              <i class="input-helper"></i></label>
+                          </div>
+                          <div class="form-check form-check-success">
+                            <label class="form-check-label">
+                              <input type="radio" class="form-check-input" name="radio" id="radio3" checked=""
+                                ng-model="objeto.situacao" value="finalizado">
+                              Finalizado
+                              <i class="input-helper"></i></label>
+                          </div>
+                          <div class="form-check form-check-success">
+                            <label class="form-check-label">
+                              <input type="radio" class="form-check-input" name="radio" id="radio4" checked=""
+                                ng-model="objeto.situacao" value="faltou">
+                              Faltou
+                              <i class="input-helper"></i></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 nascimento">
+                        <div class="form-group">
+                          <label for="nascimento">Nascimento</label>
+                          <div id="datepicker-nascimento" class="input-group date datepicker">
+                            <input type="text" class="form-control" ng-model="objeto.nascimento"
+                              ng-disabled="objeto.id || objeto.flagBloquear" readonly>
+                            <span class="input-group-addon input-group-append border-left">
+                              <span class="mdi mdi-calendar input-group-text"></span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5 email">
+                        <div class="form-group">
+                          <label for="email">Email</label>
+                          <input type="text" id="email" class="form-control" ng-model="objeto.email"
+                            ng-disabled="objeto.id || objeto.flagBloquear" placeholder="Email"
+                            data-inputmask="'alias': 'email'">
+                        </div>
+                      </div>
+                      <div class="col-md-3 telefone">
+                        <div class="form-group">
+                          <label for="telefone">Telefone</label>
+                          <input type="text" id="telefone" class="form-control" ng-model="objeto.telefone"
+                            ng-disabled="objeto.id || objeto.flagBloquear" placeholder="Telefone">
+                        </div>
+                      </div>
+                      <div class="col-md-2 convenioNome">
+                        <div class="form-group">
+                          <label for="convenioNome">Nome do convênio</label>
+                          <input type="text" id="convenioNome" class="form-control" ng-model="objeto.convenioNome"
+                            ng-disabled="objeto.id || objeto.flagBloquear">
+                        </div>
+                      </div>
+                      <div class="col-md-2 float-right convenioNumero">
+                        <div class="form-group">
+                          <label for="convenioNumero">Número do convênio</label>
+                          <input type="text" id="convenioNumero" class="form-control" ng-model="objeto.convenioNumero"
+                            ng-disabled="objeto.id || objeto.flagBloquear">
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-3 data">
+                          <div class="form-group">
+                            <label for="datepicker-data">Data do atendimento (*)</label>
+                            <div id="datepicker-data" class="input-group date datepicker">
+                              <input name="data" type="text" class="form-control" ng-model="objeto.data" readonly
+                                required />
+                              <span class="input-group-addon input-group-append border-left">
+                                <span class="mdi mdi-calendar input-group-text"></span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-3 inicio">
+                          <label for="exampleSelectGender">Inicio (*)</label>
+                          <div class="input-group date">
+                            <div class="input-group">
+                              <input name="horarioInicio" id="horarioInicio" type="text" min="20" max="10"
+                                class="form-control datetimepicker-input" ng-model="objeto.horarioInicio" required />
+                              <div class="input-group-addon input-group-append"><i
+                                  class="mdi mdi-clock input-group-text"></i></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-3 fim">
+                          <label for="exampleSelectGender">Fim (*)</label>
+                          <div class="input-group date">
+                            <div class="input-group">
+                              <input name="horarioFim" id="horarioFim" type="text"
+                                class="form-control datetimepicker-input" ng-model="objeto.horarioFim" required />
+                              <div class="input-group-addon input-group-append"><i
+                                  class="mdi mdi-clock input-group-text"></i></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6 procedimento">
+                        <div class="form-group">
+                          <label for="procedimento">Especialidade</label>
+                          <select class="form-control" id="procedimento" ng-model="objeto.procedimentoCategoria">
+                            <option ng-repeat="procedimento in procedimentos" value="{{procedimento}}">
+                              {{procedimento}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6 descricao">
+                        <div class="form-group">
+                          <label for="descricao">Descrição</label>
+                          <input type="text" id="descricao" class="form-control" ng-model="objeto.descricao"
+                            placeholder="Descrição">
+                        </div>
+                      </div>
+                      <div class="col-md-6 profissionais">
+                        <div class="form-group">
+                          <label for="Profissional">Dentista (*)</label>
+                          <select class="form-control" id="Profissional" name="profissional"
+                            ng-model="objeto.profissionalID" required>
+                            <option ng-repeat="profissional in profissionais track by $index" value="{{profissional.id}}">
+                              {{profissional.nome}}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="row">
+                      <span>(*) Campos obrigatórios</span>
+                    </div>
+                    <div class="row mt-3">
+                      <button ng-disabled="disabledButton || !form.$valid" type="submit" class="btn btn-primary mr-2"
+                        ng-click="salvar()">Salvar</button>
+                      <button class="btn btn-light mr-2" ng-click="voltar()">Voltar</button>
+                      <button class="btn btn-danger mr-2" ng-click="excluir(objeto)">Excluir</button>
+                      <button class="btn btn-success hide" ng-click="preencher()">Preencher</button>
+                    </div>
+                    <pre class="hide">{{form | json}}</pre>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <!-- </div> -->
+          </div>
+        </div>
+      </div>
+      <!-- Modal -->
+      <div class="modal fade" id="escolhaDoPaciente" tabindex="-1" role="dialog"
+        aria-labelledby="escolhaDoPacienteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="escolhaDoPacienteLabel">Novo Agendamento</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h5>Digite o nome do paciente:</h5>
+              <input type="text" class="form-control" ng-model="nomeOuCPF" ng-keyup="buscarPacientes()">
+              <br>
+              <div class="card card-inverse-info" ng-if="pacientesEncontrados.length == 0">  
+                <div class="card-body">
+                  <p class="mb-2">
+                    Não encontramos nenhum paciente com este nome. 
+                    <br />
+                    Deseja cadastrar um novo? 
+                  </p>
+                  <button class="btn btn-info d-block d-sm-inline mx-auto"  data-dismiss="modal" ng-click="navegarParaCadastroDePaciente()">Sim</button>
+                </div>
+              </div>
+              <div class="row" ng-if="pacientesEncontrados.length > 0">
+                <h5>Resultados:</h5>
+                <div class="table-sorter-wrapper col-lg-12 table-responsive">
+                  <table id="sortable-table-1" class="table">
+                    <thead>
+                      <tr>
+                        <th class="pointer sortStyle">Nome<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="pointer sortStyle">CPF<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="hide">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="objeto in pacientesEncontrados">
+                        <td class="pointer" id="load" ng-click="selecionarPaciente(objeto)">{{objeto.nome}}</td>
+                        <td class="pointer" id="load" ng-click="selecionarPaciente(objeto)">{{objeto.cpf}}</td>
+                        <td class="hide">
+                          <a href="javascript:void(0)" ng-click="selecionarPaciente(objeto)"
+                            class="botao-de-acao editar">
+                            <i class="fa fa-edit"></i>
+                          </a>
+
+                          <a href="javascript:void(0)" class="botao-de-acao excluir" ng-click="excluir(objeto)">
+                            <i class="fa fa-trash-o"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <nav class="col-12" aria-label="Page navigation">
+                    <ul id="pagination-demo" class="pagination mt-3"></ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+              <!-- <button type="button" class="btn btn-primary" ng-click="buscarPacientes()">Buscar</button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

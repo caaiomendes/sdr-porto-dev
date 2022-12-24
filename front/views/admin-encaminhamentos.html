@@ -1,0 +1,59 @@
+<div id="procedimentos" class="container-scroller">
+  <div class="container-fluid">
+    <div class="content-wrapper">
+      <div id="tabela" ng-if="!flagEditando" class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Lista de Encaminhamentos</h4>
+              <div class="row">
+                <input type="text" class="form-control col-md-6 mb-3" ng-model="objeto.busca" />
+                <button class="btn btn-success  col-md-3 ml-3  mb-3" ng-click="getBy()">Buscar</button>
+              </div>
+              <div class="jumping-dots-loader" ng-if="!buscado">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="row alert alert-fill-info" role="alert" ng-if="objetos.length <= 0 && buscado">
+                Ainda não temos nada cadastrado :(
+              </div>
+              <div class="row">
+                <div class="table-sorter-wrapper col-lg-12 table-responsive" ng-if="objetos.length > 0">
+                  <table id="sortable-table-1" class="table" ng-if="(objetos | json) != '{}'">
+                    <thead>
+                      <tr>
+                        <th class="pointer sortStyle">Data<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                        <th class="pointer sortStyle">Paciente<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                        <th class="pointer sortStyle">De Dentista<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                        <th class="pointer sortStyle">Clínica<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                        <th class="pointer sortStyle">Especialidade<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                        <th class="pointer sortStyle">Dente/Região<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                        <th class="pointer sortStyle">Procedimento<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                        <th class="pointer sortStyle">Mensagem Retorno<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                        <th class="pointer sortStyle">Para Dentista<i class="mdi mdi-chevron-down" ng-click="ordenarTabelas()"></i></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="objeto in objetos track by $index">
+                        <td>{{objeto.encaminhamento.dataFormatada}}</td>
+                        <td class="pointer" ng-click="irParaPacientes(objeto)">{{objeto.paciente.nome}}</td>
+                        <td>{{objeto.dentistaSend.apelido}}</td>
+                        <td>{{objeto.clinica.nome}}</td>
+                        <td>{{objeto.procedimento.categoria}}</td>
+                        <td>{{objeto.odontograma.dente}}</td>
+                        <td>{{objeto.procedimento.nome}}</td>
+                        <td>{{objeto.encaminhamento.descricao}}</td>
+                        <td>{{objeto.dentistaRec.apelido}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

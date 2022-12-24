@@ -1,0 +1,16 @@
+[20-Mar-2020 12:34:09 UTC] PHP Fatal error:  Uncaught ReflectionException: Class log does not exist in /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php:741
+Stack trace:
+#0 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php(741): ReflectionClass->__construct('log')
+#1 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php(631): Illuminate\Container\Container->build('log', Array)
+#2 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(674): Illuminate\Container\Container->make('log', Array)
+#3 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php(842): Illuminate\Foundation\Application->make('log')
+#4 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php(805): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#5 /home/waisoc/web/teste/estrategia3/vendor/la in /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 741
+[20-Mar-2020 12:35:06 UTC] PHP Fatal error:  Uncaught ReflectionException: Class log does not exist in /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php:741
+Stack trace:
+#0 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php(741): ReflectionClass->__construct('log')
+#1 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php(631): Illuminate\Container\Container->build('log', Array)
+#2 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(674): Illuminate\Container\Container->make('log', Array)
+#3 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php(842): Illuminate\Foundation\Application->make('log')
+#4 /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php(805): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#5 /home/waisoc/web/teste/estrategia3/vendor/la in /home/waisoc/web/teste/estrategia3/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 741

@@ -1,0 +1,359 @@
+<div id="entradas-saidas" class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <!-- <pre>
+          {{controles.mostrarClinicas}}
+          {{controles.clinicaSelecionada}}
+        </pre> -->
+        <div class="content" ng-if="!controles.mostrarClinicas">
+          <div class="row mb-4">
+            <h4 class="card-title">Financeiro</h4>
+          </div>
+          <div class="row mb-4">
+            <img class="logotipo" ng-src="{{imagem_clinica}}" width="120px" />
+            <button id="novo" type="button" class="btn btn-primary btn-rounded" ng-click="abrirModal()">+</button>
+            <div class="dados ml-2">
+              <h4 class="">Clinica: {{controles.clinicaSelecionada.nome}}</h4>
+              <button type="button" class="btn btn-icon-text btn-warning mt-2" ng-click="trocarDeClinica()">
+                <i class="mdi mdi-tooth btn-icon-prepend"></i>Escolher outra Clínica</button>
+              <br>
+              <div class="escolher-ano mt-4">
+                <input type="number" class="form-control mr-2" min="2000" max="2030" value="2022" ng-model="controles.ano">
+                <button type="button" class="btn btn btn-primary mr-2" ng-click="trocarAno()">Trocar de Ano</button>
+                <button type="button" class="btn btn btn-primary" ng-click="trocarAno('hoje')" ng-if="diferenteDeHoje()">Mês atual</button>
+              </div>
+              <br>
+              <!-- <button type="button" class="btn btn-primary btn-icon-text">
+                <i class="mdi mdi-tooth btn-icon-prepend"></i>
+                Escolher outra Clínica
+              </button> -->
+            </div>
+            <div class="valores">
+              <div class="badge badge-pill badge-primary mb-2">
+                <span class="texto">Entradas:</span>  
+                <span class="valor">{{receitas_valor | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-danger mb-2">
+                <span class="texto">Saídas:</span>  
+                <span class="valor">{{custos_valor | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-warning">
+                <span class="texto">Resultado:</span>  
+                <span class="valor">{{receitas_valor - custos_valor | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+            </div>
+          </div>
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link" id="tab1" data-toggle="tab" href="#" data-mes="01" role="tab"
+                aria-controls="home-1" aria-selected="true">Jan</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab2" data-toggle="tab" href="#" data-mes="02" role="tab"
+                aria-controls="anamnese-tab-content" aria-selected="false">Fev</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab3" data-toggle="tab" href="#" data-mes="03" role="tab"
+                aria-controls="arquivos-tab-content" aria-selected="false">Mar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab4" data-toggle="tab" href="#" data-mes="04" role="tab"
+                aria-controls="historico-tab-content" aria-selected="false">Abr</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab5" data-toggle="tab" href="#" data-mes="05" role="tab"
+                aria-controls="atendimento-tab-content" aria-selected="false">Maio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab6" data-toggle="tab" href="#" data-mes="06" role="tab"
+                aria-controls="planejamento-tab-content" aria-selected="false">Jun
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab7" data-toggle="tab" href="#" data-mes="07" role="tab"
+                aria-controls="planejamento-tab-content" aria-selected="false">Jul
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab8" data-toggle="tab" href="#" data-mes="08" role="tab"
+                aria-controls="planejamento-tab-content" aria-selected="false">Ago
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab9" data-toggle="tab" href="#" data-mes="09" role="tab"
+                aria-controls="planejamento-tab-content" aria-selected="false">Set
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab10" data-toggle="tab" href="#" data-mes="10" role="tab"
+                aria-controls="planejamento-tab-content" aria-selected="false">Out
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab11" data-toggle="tab" href="#" data-mes="11" role="tab"
+                aria-controls="planejamento-tab-content" aria-selected="false">Nov
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab12" data-toggle="tab" href="#" data-mes="12" role="tab"
+                aria-controls="planejamento-tab-content" aria-selected="false">Dez
+              </a>
+            </li>
+          </ul>
+          <div class="tab-content" ng-init="prepararAbas()">
+            <div class="tab-pane fade show active" role="tabpanel"
+              aria-labelledby="home-tab">
+              <div class="row alert alert-fill-info" role="alert" ng-if="objetos.length == 0">
+                <p>
+                Não encontramos resultados para esta busca :( 
+                </p>
+                <label class="badge badge-danger hide" >{{controles.ano}} - {{controles.mes}}</label>
+              </div>
+              <div class="filtro" ng-if="objetos.length > 0">
+                <label>Filtro:</label> 
+                <input type="text" class="mb-2 mt-2" ng-model="controles.filtro" ng-keyup="recalcularValores()">
+              </div>
+              <table id="order-listing" class="table" ng-if="objetos.length > 0">
+                <thead>
+                  <tr>
+                      <th>Data</th>
+                      <th>Origem</th>
+                      <th>Centro de Receita</th>
+                      <th>Centro de Custo</th>
+                      <th>Forma de Pagamento</th>
+                      <th>Valor</th>
+                      <th>Ações</th>
+                      <th>Acertos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- <tr ng-repeat="objeto in (controles.filteredItems = (objetos | orderBy:['data'] | filter: controles.filtro))"> -->
+                  <tr ng-repeat="objeto in (controles.filteredItems = (objetos | orderBy:['data'] | filter: filtrador))">
+                  <!-- <tr ng-repeat="objeto in (controles.filteredItems = (objetos | orderBy:['data'] | filter: { origem: controles.filtro } ))"> -->
+                      <td>{{objeto.data | date: 'dd-MM-yyyy'}}</td>
+                      <td>{{objeto.origem}}</td>
+                      <td>
+                        {{ (objeto.tipo != 'particular' && objeto.centro_receita) ? buscarReceitaByKey(objeto.centro_receita) : ''}}
+                        {{objeto.tipo == 'particular' ? objeto.centro_receita : ''}}
+                        {{objeto.tipo != 'particular' && !objeto.centro_receita ? '-' : ''}}
+                      </td>
+                      <td>{{objeto.centro_custo ? buscarCustoByKey(objeto.centro_custo) : '-'}}</td>
+                      <td>{{objeto.forma || objeto.formaESmanual ? buscarFormaPagamentoById(objeto) : '-'}}</td>
+                      <td>R$ {{  (objeto.valor) }}</td>
+                      <td>
+                        <label class="badge badge-success"  ng-if="objeto.acertoID == null" id="btn-editar" ng-click="editar(objeto)">Editar</label>
+                        <label class="badge badge-danger" id="btn-excluir" ng-click="excluir(objeto)">Excluir</label>
+                      </td>
+                      <td>
+                        <button type="button" ng-if="objeto.acertoID == null && objeto.centro_custo == ''" ng-click="abrirModalAcertos(objeto)" class="btn btn-sm btn-warning">Acertar</button>
+                        <button type="button" ng-if="objeto.acertoID != null && objeto.chave != null && objeto.centro_custo == ''" ng-click="abrirModalAcertosDetalhes(objeto)" class="btn btn-sm btn-success">Detalhes</button>
+                        <button type="button" ng-if="objeto.acertoID != null && objeto.chave == null && objeto.centro_custo == ''" disabled class="btn btn-sm btn-info">Entrada Manual</button>
+                        <button type="button" ng-if="objeto.centro_custo != ''" disabled class="btn btn-sm btn-info">Custo</button>
+                      </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="content" ng-if="controles.mostrarClinicas">
+          <escolha-clinica class="clinicas-escolha" origem="entradas-saidas" ></escolha-clinica>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-novo-registro" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Novo registro</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form name="formulario">
+          <div class="form-group">
+            <label for="datepicker">Data (*)</label>
+            <div id="datepicker" class="input-group date datepicker">
+              <input type="text" id="data" class="form-control" ng-model="objeto.data" readonly ng-required="true">
+              <span class="input-group-addon input-group-append border-left">
+                <span class="mdi mdi-calendar input-group-text"></span>
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Origem (*)</label>
+            <input type="text" class="form-control" id="origem" ng-model="objeto.origem" ng-required="true"/>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Tipo (*)</label>
+                <select class="form-control" id="tipo" ng-model="objeto.tipo" ng-required="true">
+                  <option value="">Escolha</option>
+                  <option value="receita">Receita</option>
+                  <option value="custo">Custo</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group" id="combo1" ng-if="objeto.tipo == 'receita'">
+                <label>Centro de Receita (*) </label>
+                <select class="form-control" ng-model="objeto.centro" id="select_receita" ng-required="true">
+                  <option value="{{receita.key}}" ng-repeat="receita in receitas | orderBy: 'value'" ng-bind="receita.value"></option>
+                </select>
+              </div>
+              <div class="form-group" id="combo2" ng-if="objeto.tipo == 'custo'">
+                <label for="tipo">Centro de Custo (*) </label>
+                <select class="form-control" ng-model="objeto.centro" id="select_custo" ng-required="true">
+                  <option value="{{custo.key}}" ng-repeat="custo in custos | orderBy: 'value'" ng-bind="custo.value | titleCase"></option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Valor (*)</label>
+            <input type="text" class="form-control reais" 
+              id="valor"
+              ng-model="objeto.valor"
+              ng-required="true"
+              data-inputmask="'alias': 'currency'" 
+              data-inputmask-prefix="R$ " 
+              data-inputmask-groupSeparator="." 
+              data-inputmask-radixPoint="," 
+              data-inputmask-autoUnmask="true" />
+              
+          </div>
+          <div ng-if="objeto.tipo == 'receita' && objeto.centro != 2" class="form-group">
+            <label>Forma de Pagamento (*)</label>
+            <select class="form-control" ng-model="objeto.formaESmanual">
+              <option disabled value="">Selecione</option>
+              <option value="{{forma.id}}" ng-repeat="forma in formasDePagamento track by forma.id">{{forma.nome}}</option>
+            </select>
+          </div>
+        </form>
+        <div class="form-group">
+          <label>(*) Campos obrigatórios</label>
+        </div>
+      </div> 
+      <div class="modal-footer">
+        <button type="button" id="btn-salvar" class="btn btn-primary" ng-disabled="!formulario.$valid" ng-click="salvar()">Salvar</button>
+        <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <pre class="hide">
+          {{objeto}}
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-acertos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div id="acertarModal" class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Acertos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4 class="subtitulo">Gerais</h4>
+        <ul class="lista">
+            <li class="item">Data: {{controles.itemParticular.data}}</li>
+            <li class="item">Paciente: {{controles.itemParticular.origem}}</li>
+            <li class="item">Dentista: {{controles.itemParticular.dentistaOrigem}}</li>
+            <li class="item">Planejamento: {{controles.itemParticular.planejamento_id}}</li>
+            <li class="item">Valor: R$ {{controles.itemParticular.valor}}</li>
+        </ul>
+        <div ng-if="objetos.procedimentos.length > 0">
+          <h4 class="subtitulo">Procedimentos</h4>
+          <table class="table table-striped table-hover">
+            <th>Procedimento</th>
+            <th>Dentista Executor</th>
+            <th>Data</th>
+            <th>Valor a Receber</th>
+            <tr  ng-repeat="proc in objetos.procedimentos">
+              <td>{{proc.nomeProcedimento}}</td>
+              <td><select class="form-control" ng-model="proc.dentistaExecutorID" >
+                <option value="{{receita.key}}" ng-repeat="receita in receitas | orderBy: 'value'" ng-bind="receita.value"></option>
+              </select></td>
+              <td>
+                <div class="input-group">
+                  <label>Mês:<input type="number" label="Mês" class="form-control mr-2" min="1" max="12" ng-model="proc.AcertoMes"></label>
+                  <label>Ano:<input type="number" title="Ano" class="form-control mr-2" min="2000" max="2030" ng-model="proc.AcertoAno"></label>
+                </div>
+              </td>
+              <td><label>R$:<input ng-change="somarValorAcertos()" name="valorAcertos" min="0" type="number" ng-model="proc.valorAcertos"class="form-control p-input"></label></td>
+            </tr>
+          </table>
+          <br/>
+          <h4 class="subtitulo">Valor Restante</h4>
+          <ul class="lista">
+            <li class="item">R$: {{controles.itemParticular.valorRestanteAcertos}}</li>
+          </ul>
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-salvar" ng-disabled="!controles.confirmarAcertos && objetos.procedimentos.length > 0" class="btn btn-primary" ng-click="salvarAcertos()">Confirmar</button>
+        <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-acertos-detalhes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Acertos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4 class="subtitulo">Gerais</h4>
+        <ul class="lista">
+            <li class="item">Data: {{controles.financeiroSelecionado.data}}</li>
+            <li class="item">Paciente: {{controles.financeiroSelecionado.origem}}</li>
+            <li class="item">Dentista: {{controles.financeiroSelecionado.dentistaOrigem}}</li>
+            <li class="item">Planejamento: {{controles.financeiroSelecionado.planejamento_id}}</li>
+            <li class="item">Valor: R$ {{controles.financeiroSelecionado.valor}}</li>
+        </ul>
+        <h4 class="subtitulo">Procedimentos</h4>
+        <table class="table table-striped table-hover">
+          <th>Procedimento</th>
+          <th>Dentista Executor</th>
+          <th>Data</th>
+          <th>Valor a Receber</th>
+          <tr  ng-repeat="proc in controles.financeiroSelecionado.detalhesAcertoSelecionado">
+            <td>{{proc.nomeProcedimento}}</td>
+            <td><select ng-disabled="true" class="form-control" ng-model="proc.profissionalID" >
+              <option value="{{receita.key}}" ng-repeat="receita in receitas | orderBy: 'value'" ng-bind="receita.value"></option>
+            </select></td>
+            <td>
+              <div class="input-group">
+                <label>Mês:<input ng-disabled="true" type="number" label="Mês" class="form-control mr-2" min="1" max="12" ng-model="proc.mes"></label>
+                <label>Ano:<input ng-disabled="true" type="number" title="Ano" class="form-control mr-2" min="2000" max="2030" ng-model="proc.ano"></label>
+              </div>
+            </td>
+            <td><label>R$:<input ng-disabled="true" min="0" type="number" ng-model="proc.valorProcedimento"class="form-control p-input"></label></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>

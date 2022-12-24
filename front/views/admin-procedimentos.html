@@ -1,0 +1,153 @@
+<div id="procedimentos" class="container-scroller">
+    <div class="container-fluid">
+        <div class="content-wrapper">
+          <div id="tabela" ng-if="!flagEditando" class="row">
+            <div class="col-12 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Lista de procedimentos</h4>
+                  <p class="card-description" ng-if="(objetos | json) != '{}'">Abaixo a lista de <code>procedimentos</code> já cadastrados.</p>
+                  <button id="novo" type="button" class="btn btn-primary btn-rounded" ng-click="novo()">+</button>
+                  <div class="jumping-dots-loader" ng-if="!buscado">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <div class="row alert alert-fill-info" role="alert" ng-if="(objetos | json) == '{}' && buscado">
+                    Ainda não temos nada cadastrado :(
+                  </div>
+                  <div class="row">
+                    <div class="table-sorter-wrapper col-lg-12 table-responsive">
+                      <table id="sortable-table-1" class="table" ng-if="(objetos | json) != '{}'">
+                        <thead>
+                          <tr>
+                            <th class="pointer sortStyle">#<i class="mdi mdi-chevron-down"></i></th>
+                            <th class="pointer sortStyle">Nome<i class="mdi mdi-chevron-down"></i></th>
+                            <th class="pointer sortStyle">Código<i class="mdi mdi-chevron-down"></i></th>
+                            <th class="pointer sortStyle">Categoria<i class="mdi mdi-chevron-down"></i></th>
+                            <th class="pointer sortStyle">Ativo<i class="mdi mdi-chevron-down"></i></th>
+                            <th>Ações</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="objeto in objetos" >
+                            <td class="pointer" ng-click="selecionar(objeto)">{{$index+1}}</td>
+                            <td class="pointer" ng-click="selecionar(objeto)">{{objeto.nome | limitTo:50 }} {{objeto.nome.length > 50 ? '...' : ''}}</td>
+                            <td class="pointer" ng-click="selecionar(objeto)">{{objeto.codigo}}</td>
+                            <td class="pointer" ng-click="selecionar(objeto)">{{objeto.categoria}}</td>
+                            <td class="pointer" ng-click="selecionar(objeto)">{{objeto.status}}</td>
+                            <td>
+                                <a href="javascript:void(0)"  ng-click="selecionar(objeto)" class="botao-de-acao editar">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+
+                                <a href="javascript:void(0)" class="botao-de-acao excluir" ng-click="excluir(objeto)">
+                                    <i class="fa fa-trash-o"></i>
+                                </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="incalt" ng-if="flagEditando" class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Procedimento</h4>
+                    <p class="card-description">
+                      Inclusão ou alteração de procedimento
+                    </p>
+                    <form class="forms-sample" id="form">
+                      <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nome">Nome</label>
+                                <input id="nome" type="text" class="form-control" ng-model="objeto.nome" placeholder="Nome">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="codigo">Código</label>
+                                <input id="codigo" type="text" class="form-control" ng-model="objeto.codigo" placeholder="codigo">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group">
+                              <label for="categoria">Categoria</label>
+                              <select class="form-control" id="categoria" ng-model="objeto.categoria">
+                                <option value="CIRURGIA">Cirurgia</option>
+                                <option value="DIAGNÓSTICO">Diagnóstico</option>
+                                <option value="PRÓTESE">Prótese</option>
+                                <option value="PERIODONTIA">Periodontia</option>
+                                <option value="PCNE">PCNE</option>
+                                <option value="ORTODONTIA">Ortodontia</option>
+                                <option value="ODONTOPEDIATRIA">Odontopediatria</option>
+                                <option value="IMPLANTODONTIA">Implantodontia</option>
+                                <option value="EXAMES">Exames</option>
+                                <option value="ENDODONTIA">Endodontia</option>
+                                <option value="DENTÍSTICA">Dentística</option>
+                              </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                              <label for="valor1">PARTICULAR</label>
+                              <input type="text" id="valor1" class="form-control" ng-model="objeto.valor1" placeholder="PARTICULAR" data-inputmask="'alias': 'currency'">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="valor2">AMIL</label>
+                              <input type="text" id="valor2" class="form-control" ng-model="objeto.valor2" placeholder="AMIL" data-inputmask="'alias': 'currency'">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="valor3">METLIFE</label>
+                            <input type="text" id="valor3" class="form-control" ng-model="objeto.valor3" placeholder="METLIFE" data-inputmask="'alias': 'currency'">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="valor4">UNIMED</label>
+                            <input type="text" id="valor4" class="form-control" ng-model="objeto.valor4" placeholder="UNIMED" data-inputmask="'alias': 'currency'">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="valor5">ODONTOPREV</label>
+                            <input type="text" id="valor5" class="form-control" ng-model="objeto.valor5" placeholder="ODONTOPREV" data-inputmask="'alias': 'currency'">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="status">status</label>
+                            <input type="text" id="status" class="form-control" ng-model="objeto.status" placeholder="status">
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="descricao">Descrição</label>
+                              <textarea id="descricao" class="form-control" ng-model="objeto.descricao" placeholder="descricao" />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                          <button type="submit" class="btn btn-primary mr-2" ng-click="salvar()">Salvar</button>
+                          <button class="btn btn-light mr-2" ng-click="voltar()">Voltar</button>
+                          <button class="btn btn-danger mr-2" ng-click="excluir(objeto)" ng-if="objeto.id">Excluir</button>
+                          <button class="btn btn-success hide" ng-click="preencher()">Preencher</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,308 @@
+<div id="profissionais" class="container-scroller">
+  <div class="container-fluid">
+    <div class="content-wrapper">
+      <div id="tabela" ng-if="!flagEditando" class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Lista de profissionais</h4>
+              <p class="card-description" ng-if="(objetos | json) != '{}'">Abaixo lista de <code>profissionais</code> já
+                cadastrados.</p>
+              <button id="novo" type="button" class="btn btn-primary btn-rounded" ng-click="novo()">+</button>
+              <div class="jumping-dots-loader" ng-if="!buscado">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="row alert alert-fill-info" role="alert" ng-if="(objetos | json) == '{}' && buscado">
+                Ainda não temos nada cadastrado :(
+              </div>
+              <div class="row">
+                <div class="table-sorter-wrapper col-lg-12 table-responsive">
+                  <table id="sortable-table-1" class="table" ng-if="(objetos | json) != '{}'">
+                    <thead>
+                      <tr>
+                        <th class="pointer sortStyle"></th>
+                        <th class="pointer sortStyle">Nome<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="pointer sortStyle">Tipo<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="pointer sortStyle">CPF<i class="mdi mdi-chevron-down"></i></th>
+                        <th class="pointer sortStyle">Telefone<i class="mdi mdi-chevron-down"></i></th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="objeto in objetos">
+                        <td class="pointer" ng-click="selecionar(objeto)">
+                          <img class="thumb" ng-if="objeto.foto" ng-src="{{barramento}}/upload/{{objeto.foto}}"
+                            width="100px">
+                        </td>
+                        <td class="pointer" ng-click="selecionar(objeto)">{{objeto.nome}}</td>
+                        <td class="pointer" ng-click="selecionar(objeto)">{{objeto.tipo}}</td>
+                        <td class="pointer" ng-click="selecionar(objeto)">{{objeto.cpf}}</td>
+                        <td class="pointer" ng-click="selecionar(objeto)">{{objeto.telefone}}</td>
+                        <td>
+                          <a href="javascript:void(0)" ng-click="selecionar(objeto)" class="botao-de-acao editar">
+                            <i class="fa fa-edit"></i>
+                          </a>
+
+                          <a href="javascript:void(0)" class="botao-de-acao excluir" ng-click="excluir(objeto)">
+                            <i class="fa fa-trash-o"></i>
+                          </a>
+
+                          <a href="javascript:void(0)" class="botao-de-acao trocarSenha hide"
+                            ng-click="modalDeTrocarSenha(objeto)">
+                            <i class="fa fa-key"></i>
+                          </a>
+
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="incalt" ng-if="flagEditando" class="row">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Profissional</h4>
+              <p class="card-description">
+                Inclusão ou alteração de profissional
+              </p>
+              <form class="forms-sample" id="form" method="post" enctype="multipart/form-data" autocomplete="off">
+                <div class="row">
+                  <div class="col-md-7">
+                    <div class="form-group col-md-10">
+                      <label for="nome">Nome</label>
+                      <input type="text" class="form-control" placeholder="Nome" ng-model="objeto.nome">
+                    </div>
+                  </div>
+                  <div class="col-md-5 hide">
+                    <div class="form-group row">
+                      <div class="col-sm-4">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios1"
+                              value="" checked>
+                            Masculino
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-5">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios2"
+                              value="option2">
+                            Feminino
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <div class="form-check form-check-success">
+                        <label class="form-check-label">
+                          <input type="radio" class="form-check-input" name="sexo" id="sexo1" checked=""
+                            ng-model="objeto.sexo" value="masculino">
+                          Masculino
+                          <i class="input-helper"></i></label>
+                      </div>
+                      <div class="form-check form-check-success">
+                        <label class="form-check-label">
+                          <input type="radio" class="form-check-input" name="sexo" id="sexo2" checked=""
+                            ng-model="objeto.sexo" value="feminino">
+                          Feminino
+                          <i class="input-helper"></i></label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <p class="mb-2">Ativo</p>
+                      <label class="toggle-switch toggle-switch-success">
+                        <input type="checkbox" ng-model="objeto.situacao" ng-true-value="'ativo'"
+                          ng-false-value="'inativo'">
+                        <span class="toggle-slider round"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="email">Email</label>
+                      <input type="email" class="form-control" id="email" placeholder="Email" ng-model="objeto.email"
+                        ng-readonly="objeto.id">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="telefone">Telefone</label>
+                      <input type="text" class="form-control" id="telefone" placeholder="Telefone"
+                        ng-model="objeto.telefone">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="apelido">Apelido</label>
+                      <input type="text" class="form-control" id="apelido" placeholder="Apelido"
+                        ng-model="objeto.apelido">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="tipo">Tipo</label>
+                      <select class="form-control" id="tipo" ng-model="objeto.tipo">
+                        <option value="administrador">Administrador</option>
+                        <option value="secretaria">Secretaria</option>
+                        <option value="dentista">Dentista</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="rg">RG</label>
+                      <input type="text" class="form-control" id="rg" placeholder="RG" ng-model="objeto.rg">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="cpf">CPF</label>
+                      <input type="text" class="form-control" id="cpf" placeholder="CPF" ng-model="objeto.cpf">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="estadoCivil">Estado Civil</label>
+                      <select class="form-control" id="estadoCivil" ng-model="objeto.estadoCivil">
+                        <option value="solteiro">solteiro(a)</option>
+                        <option value="casado">casado(a)</option>
+                        <option value="divorciado">divorciado(a)</option>
+                        <option value="viúvo">viúvo(a)</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="formacao">Formacao</label>
+                      <input type="text" class="form-control" id="formacao" placeholder="Formacao"
+                        ng-model="objeto.formacao">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="datepicker-popup-nascimento">Nascimento</label>
+                      <div id="datepicker-popup-nascimento" class="input-group date datepicker">
+                        <input type="text" class="form-control" ng-model="objeto.nascimento" readonly>
+                        <span class="input-group-addon input-group-append border-left">
+                          <span class="mdi mdi-calendar input-group-text"></span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="endereco">Endereço</label>
+                      <input type="text" class="form-control" id="endereco" placeholder="Endereço"
+                        ng-model="objeto.endereco">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="CRO">CRO</label>
+                      <input type="text" class="form-control" id="CRO" placeholder="CRO" ng-model="objeto.CRO">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="dadosBancariosBanco">Banco</label>
+                      <input type="text" class="form-control" id="dadosBancariosBanco" placeholder=""
+                        ng-model="objeto.dadosBancariosBanco">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="dadosBancariosAgencia">Agência</label>
+                      <input type="text" class="form-control" id="dadosBancariosAgencia" placeholder=""
+                        ng-model="objeto.dadosBancariosAgencia">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="dadosBancariosConta">Conta</label>
+                      <input type="text" class="form-control" id="dadosBancariosConta" placeholder=""
+                        ng-model="objeto.dadosBancariosConta">
+                    </div>
+                  </div>
+                  <div class="col-md-6 hide">
+                    <div class="form-group">
+                      <label for="localDeTrabalho">Local de trabalho</label>
+                      <input type="text" class="form-control" id="localDeTrabalho" placeholder="Local de trabalho"
+                        ng-model="objeto.localDeTrabalho">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="comissao">Comissão</label>
+                      <input type="text" class="form-control" id="comissao" placeholder="Comissão"
+                        ng-model="objeto.comissao">
+                    </div>
+                  </div>
+                  <div class="col-md-6" ng-if="!objeto.id">
+                    <div class="form-group">
+                      <label for="senha">Senha</label>
+                      <input type="password" class="form-control" id="senha" placeholder="Senha"
+                        ng-model="objeto.senha">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Foto</label>
+                      <input type="file" name="files" class="form-control" ng-model="objeto.foto"
+                        onchange="angular.element(this).scope().upload()">
+                      <br />
+                      <img class="thumb" ng-if="objeto.foto" ng-src="{{barramento}}/upload/{{objeto.foto}}"
+                        width="100px">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Clínica</label>
+                      <select class="js-example-basic-multiple js-states form-control" multiple="multiple" ng-model="objeto.clinica">
+                        <option ng-repeat="item in clinica" value="{{item.id}}">{{item.nome}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <button type="submit" class="btn btn-primary mr-2" ng-click="salvar()">Salvar</button>
+                  <button class="btn btn-light mr-2" ng-click="voltar()">Voltar</button>
+                  <button class="btn btn-danger mr-2" ng-click="excluir(objeto)" ng-if="objeto.id">Excluir</button>
+                  <button class="btn btn-success hide" ng-click="preencher()">Preencher</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

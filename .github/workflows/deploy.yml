@@ -1,0 +1,36 @@
+on: 
+  push:
+    branches:
+      - 345-modulo-whatsapp
+name: 🚀 Deploy website on push
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2
+    
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: ${{ secrets.ftp_host }}
+        username: ${{ secrets.ftp_user }}
+        password: ${{ secrets.ftp_password }}
+        server-dir: subdominios/homologacao/
+        local-dir: front/ 
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/js/vendors/**
+          fileToExclude.txt
+        # exclude: "[**/.git*/**, js/vendors, **/node_modules/**, **/build/, .babelrc, .editorconfig, .eslintrc, .prettierrc, .stylelintrc]"
+        # exclude: 
+        #   - .git*
+        #   - .git*/**
+        #   - node_modules/**
+        #   - node_modules/**/*
+        #   - back/
+        #   - scss
+        #   - js/vendors

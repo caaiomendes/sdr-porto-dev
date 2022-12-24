@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+back/.env.prd
+assets/
+carga2/
+testes-cypress/package-lock.json

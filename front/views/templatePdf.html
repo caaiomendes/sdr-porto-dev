@@ -1,0 +1,351 @@
+<div class="modal fade" id="modalPrescricaoTalX" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="content-pdf" id="printableAreaPdf">
+      <div class="pdf-general">
+        <div class="header-pdf row">
+          <div class="col-4">
+            <img class="thumb" ng-src="{{barramento}}/upload/{{objetoClinica.logo}}" width="100px">
+          </div>
+          <div class="infos-header col-8">
+            <p class="nomeClinicaHeader">{{objetoClinica.nome}} </p>
+            <p class="cnpjClinicaHeader">{{objetoClinica.cnpj}} </p>
+            <p class="enderecoClinicaHeader">{{objetoClinica.endereco}} </p>
+            <p class="telefoneClinicaHeader">{{objetoClinica.tel ? 'Fone: ' + objetoClinica.tel : ''  }} </p>
+          </div>
+        </div>
+        <div class="title-pdf">
+          <h3 class="nome-titulo">
+            {{titulo}}
+          </h3>
+        </div>
+        <div class="paciente-pdf">
+          <p class="titulo-paciente">
+            Paciente
+          </p>
+          <p class="nome-paciente" id="nomePac">
+            {{pacienteNome}}
+          </p>
+          <p class="cpf-paciente">
+            CPF: {{pacienteCpf}}
+          </p>
+          <p class="idade-paciente" ng-if="pacienteIdade">
+            {{pacienteNascimento | date:'dd/MMM'}} ({{pacienteIdade}} anos)
+          </p>
+        </div>
+        <div class="body-pdf">
+          <div class="ifPrescricoes" ng-if="listaMedicamentosInseridos.length > 0">
+            <p class="titulo-prescricao">
+              PRESCRIÇÕES
+            </p>
+          </div>
+          <div class="ifPrescricoes" ng-if="listaExamesInseridos.length > 0">
+            <p class="titulo-prescricao">
+              EXAMES
+            </p>
+          </div>
+          <div class="content-body">
+            <div ng-if="listaExamesInseridos.length > 0" ng-repeat="item in listaExamesInseridos">
+              <p class="conteudoExames">
+                {{item.nome}} <br>
+                {{item.obeservacao}}
+              </p>
+            </div>
+            <div ng-if="listaMedicamentosInseridos.length > 0" ng-repeat="item in listaMedicamentosInseridos">
+              <div class="conteudoPrescricao">
+                <p>{{item.grupo_uso}} - {{item.tipo_uso}}</p>
+                <p class="nomeMedicamento">{{item.nomeMedicamento}}</p>
+                <p class="apresentacao">{{item.apresentacao}}</p>
+                <p class="posologia">{{item.posologia}}</p>
+                <p class="duracao">Durante: {{item.duracao}} </p>
+                <p class="descricao">{{item.descricao}}</p>
+              </div>
+            </div>
+            <p ng-if="recomendacoesExames || recomendacoesPrescricao" class="titulo-recomendacao">
+              RECOMENDAÇÕES
+            </p>
+            <div ng-if="recomendacoesExames || recomendacoesPrescricao">
+              <p class="contentRecomendacao">
+                {{recomendacoesPrescricao ? recomendacoesPrescricao :recomendacoesExames }}
+              </p>
+            </div>
+            <div ng-if="textoAtestado || textoTimbrado" class="textoLivre">
+              <p id="textoAtestado" ng-if="textoAtestado"></p>
+              <p id="textoTimbrado" ng-if="textoTimbrado"></p>
+            </div>
+          </div>
+          <div ng-if="cid" class="contentCid">
+            CID: {{cid}}
+          </div>
+          <div class="primeiro-footer">
+            <p>
+              {{diaSemana}}, {{dia}} de {{mes}} de {{ano}}
+            </p>
+            <div class="infos-footer">
+              <p class="campo-assinatura">_________________________________</p>
+              <p class="campo-dentista-nome">{{dentistaObjeto.nome}} - {{dentistaObjeto.CRO}}</p>
+              <p class="campo-clinica-nome">{{objetoClinica.nome}}</p>
+              <p class="campo-dentista-cnpj">{{objetoClinica.cnpj}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="content-especial" ng-if="especial">
+          <div class="row">
+            <table class="firsrt-table">
+              <tbody>
+                <tr>
+                  <td align="center" colspan="2">
+                    <b>Identificação do Comprador</b>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <span>Nome Completo</span>
+                    <div></div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="">
+                    <span>Identidade</span>
+                    <div></div>
+                  </td>
+                  <td class="">
+                    <span>SSP</span>
+                    <div></div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <span>Endereço</span>
+                    <div></div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="">
+                    <span>Cidade</span>
+                    <div></div>
+                  </td>
+                  <td class="">
+                    <span>UF</span>
+                    <div></div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <span>Telefone</span>
+                    <div></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="second-table">
+              <tbody>
+                <tr>
+                  <td align="center" class="title-second-table">
+                    <b>Identificação do Fornecedor</b>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="h7 content-second-table">
+                    <!-- &nbsp; -->
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="final-footer">
+          <div>
+            Emitido por {{emitidoPor}} através da plataforma SDR PORTO em
+            {{dataAtual | date:"dd/MM/yyyy '-' HH:mm:ss"}}
+          </div>
+        </div>
+        <!-- <div class="body-pdf">
+        <div style="padding: 20px; margin: 20px; text-align: center !important; font-family: arial; font-size: 12px;">
+          <h1 style="letter-spacing: .5em; font-size: 1.5em; font-weight: bolder;">
+            {{titulo}}
+          </h1>
+        </div>
+        <div class="content-paciente" style="margin-left: 20px;">
+          <p class="titulo-paciente" style="font-size: 12px; font-family: arial; font-size: 12px;">
+            Paciente
+          </p>
+          <p class="nome-paciente" id="nomePac"
+            style="font-size: 12px; font-weight: bold; font-family: arial; font-size: 12px;">
+            {{pacienteNome}}
+          </p>
+          <p class="cpf-paciente" style="font-size: 12px; font-family: arial; font-size: 12px;">
+            CPF: {{pacienteCpf}}
+          </p>
+          <p class="idade-paciente" style="font-size: 12px; font-family: arial; font-size: 12px;">
+            {{pacienteNascimento | date:'dd/MMM'}} ({{pacienteIdade}} anos)
+          </p>
+        </div>
+        <div style="max-height: 500px;" class="content-dados">
+          <div ng-if="listaExamesInseridos.length > 0 || listaMedicamentosInseridos.length > 0"
+            style="margin-top: 30px;">
+            <p style="margin-left: 20px; font-weight: bold; font-family: arial; font-size: 12px;">
+              PRESCRIÇÕES
+            </p>
+          </div>
+          <div ng-if="listaExamesInseridos.length > 0" style="margin-left: 80px;"
+            ng-repeat="item in listaExamesInseridos">
+            <p
+              style="margin-left: -12px; border-left: 4px solid #dddddd; padding-left: 15px; font-family: arial; font-size: 12px;">
+              {{item.nome}} <br>
+              {{item.obeservacao}} <br>
+            </p>
+          </div>
+          <div ng-if="listaMedicamentosInseridos.length > 0" style="margin-left: 80px;"
+            ng-repeat="item in listaMedicamentosInseridos">
+            <p
+              style="margin-left: -12px; border-left: 4px solid #dddddd; padding-left: 15px; font-family: arial; font-size: 12px;">
+              {{item.tipo_uso}}<br>
+              {{item.apresentacao}}<br>
+              {{item.posologia}}<br>
+              Durante: {{item.duracao}} <br>
+            </p>
+          </div>
+          <div ng-if="textoAtestado || textoTimbrado" style="margin-top: 30px; margin-left: 20px;">
+            <p style="text-align: justify;" id="textoAtestado" ng-if="textoAtestado"></p>
+            <p style="text-align: justify;" id="textoTimbrado" ng-if="textoTimbrado"></p>
+          </div>
+          <p ng-if="recomendacoesExames || recomendacoesPrescricao"
+            style="margin-left: 20px; font-weight: bold; font-family: arial; font-size: 12px;">
+            RECOMENDAÇÕES
+          </p>
+          <div ng-if="recomendacoesExames || recomendacoesPrescricao" style="margin-top: 30px;">
+            <p style="margin-left: 70px;
+            border-left: 4px solid #f38e6e;
+            padding-left: 15px;
+            font-family: arial;
+            font-size: 12px;
+            max-width: 600px;">
+              {{recomendacoesPrescricao ? recomendacoesPrescricao :recomendacoesExames }}
+            </p>
+          </div>
+        </div>
+      </div> -->
+        <!-- <div class="content-first-footer">
+        <div style="margin-top: 80px; text-align: right; font-family: arial; font-size: 12px;">
+          <p>
+            {{diaSemana}}, {{dia}} de {{mes}} de {{ano}}
+          </p>
+        </div>
+        <div style="margin-top: 40px; text-align: left; font-family: arial; font-size: 12px;">
+          <p>
+          <div style="margin-bottom: -15px;"> _________________________________ </div> <br>
+          <div style="margin-bottom: -15px; text-transform: uppercase; font-weight: bold; font-size: 12px;">
+            {{dentistaObjeto.nome}} - {{dentistaObjeto.CRO}}</div> <br>
+          <div style="margin-bottom: -15px; font-size: 10px; color: #808080c7;">{{dentistaObjeto.formacao}}
+          </div>
+          <br>
+          <div style="font-weight: bold; margin-bottom: -15px; font-size: 12px; text-transform: uppercase;">
+            {{objetoClinica.nome}}</div> <br>
+          <div style="margin-bottom: -15px; margin-bottom: -15px; font-size: 10px; color: #808080c7;">
+            {{objetoClinica.cnpj}}</div> <br>
+          </p>
+        </div>
+      </div> -->
+        <!-- <div ng-if="listaMedicamentosInseridos.length > 0" class="option-especial">
+        <div class="col-12" style="display: flex; flex-wrap: wrap; margin-right: -5px; margin-left: -5px; font-size: 11px;">
+          <div class="col-5">
+            <table style="border-right: solid 1px #bbb; border-bottom: solid 1px #bbb;">
+              <tbody>
+                <tr>
+                  <td align="center" colspan="2"
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <b>Identificação do Comprador</b>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2"
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <span>Nome Completo</span>
+                    <div></div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class=""
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <span>Identidade</span>
+                    <div></div>
+                  </td>
+                  <td class=""
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <span>SSP</span>
+                    <div></div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2"
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <span>Endereço</span>
+                    <div></div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class=""
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <span>Cidade</span>
+                    <div></div>
+                  </td>
+                  <td class=""
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <span>UF</span>
+                    <div></div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2"
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <span>Telefone</span>
+                    <div></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-2"></div>
+          <div class="col-5" style="margin-top:-100px ;margin-left: 280px; border-right: solid 1px #bbb; border-bottom: solid 1px #bbb;">
+            <table>
+              <tbody>
+                <tr>
+                  <td align="center"
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    <b>Identificação do Fornecedor</b>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="h7"
+                    style="border-spacing: 0; padding: 1px 10px 2px 3px; line-height: 13px; border-top: solid 1px #bbb; border-left: solid 1px #bbb; vertical-align: top;">
+                    &nbsp;
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> -->
+        <!-- </div> -->
+        <!-- <div
+        style="position: fixed; left: 0; bottom: 0; width: 100%; margin-top: 200px; text-align: center; border-top: 1px solid; color: rgb(184, 182, 182); font-size: 12px;">
+        <div>
+          Emitido por Dr. {{dentistaObjeto.nome}} através da plataforma DR PORTO em
+          {{dataAtual | date:"dd/MM/yyyy '-' HH:mm:ss"}}
+        </div>
+      </div> -->
+      </div>
+    </div>
+  </div>
+</div>

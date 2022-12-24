@@ -1,0 +1,38 @@
+Lista de agendamentos
+    $("#ContentDados ul.list.spaced .hover.minheight5")
+    
+OBRIGATORIOS    
+    data
+        $("#ContentDados ul.list.spaced .hover.minheight5 .box-day")
+        $("#ContentDados ul.list.spaced .hover.minheight5 .box-month")
+        $("#ContentDados ul.list.spaced .hover.minheight5 .box-year")
+
+    pacienteID (já esta na controller)
+    created_at (já esta na controller)
+    updated_at (já esta na controller)
+    situacao (fixar como finaliazado - ok)
+    horarioInicio (fixar como 8:00)
+    clinicaID (fixar em uma clinica atual(Oficinal Oral))
+    profissionalID (vou fixar no DR. Roberto)
+
+    procedimentoCategoria (fixar - diagnóstico)
+    procedimentoID (diagnóstico)
+    descricao (colocar qual DR que atendeu e toda a descriçao encontrada)
+
+NAO OBRIGATORIOS
+    horarioFim
+    convenioNome
+    convenioNumero
+
+
+
+
+
+TITULO
+$("#ContentDados ul.list.spaced .hover.minheight5 .big-text")
+
+POR
+$("#ContentDados ul.list.spaced .hover.minheight5 .mid-padding-bottom.dottedbottom")
+
+DESCRICAO
+$("#ContentDados ul.list.spaced .hover.minheight5 .blue")

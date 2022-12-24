@@ -1,0 +1,12 @@
+{
+    "debug": false,
+    "user": "sdrporto_homologador",
+    "password": "aiVrkR9ER1y6@444JGq&",
+    "host": "sdrporto.com.br",
+    "port": 3306,
+    "database": "sdrporto_homologacao",
+    "exclude_tables": [
+        "migrations"
+    ],
+    "only_include_tables": ["reembolsos_descontos"]
+}

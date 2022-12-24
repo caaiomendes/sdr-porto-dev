@@ -1,0 +1,59 @@
+var perguntas = 
+    [
+        {
+            "categoria": "Motivo da consulta",
+            "pergunta": "1. Qual motivo da sua consulta?"
+        },
+        {
+            "categoria": "Última visita ao dentista",
+            "pergunta": "2. Quando foi sua última visita ao dentista?"
+        },
+        {
+            "categoria": "Cicatrização",
+            "pergunta": "3. Quando você se fere, as feridas demoram a cicatrizar?"
+        },
+        {
+            "categoria": "Alergias",
+            "pergunta": "4. Já teve ou tem alguma tipo de alergia? Caso sim, a que?"
+        },
+        {
+            "categoria": "Reação a Medicamentos",
+            "pergunta": "5. Já teve ou tem alguma reação anormal com outros medicamentos?"
+        },
+        {
+            "categoria": "Diabetes",
+            "pergunta": "6. Já teve ou tem diabetes? Caso sim, está compensado?"
+        },
+        {
+            "categoria": "Doença Famíliar",
+            "pergunta": "7. Já teve ou tem alguma doença ou patologia na família? Caso sim, quais?"
+        },
+        {
+            "categoria": "Pressão Alta",
+            "pergunta": "8. Já teve ou tem algum problema com pressão alta?"
+        },
+        {
+            "categoria": "Cardiopatia",
+            "pergunta": "9. Já teve ou tem cardiopatia congênita? Caso sim, quais?"
+        },
+        {
+            "categoria": "Hemorragia",
+            "pergunta": "10. Já teve ou tem hemorragia?"
+        },
+        {
+            "categoria": "CIRURGIA",
+            "pergunta": "11. Já fez alguma cirurgia? Qual? Quando?"
+        },
+        {
+            "categoria": "Anestesia",
+            "pergunta": "12. Já tomou anestesia odontológica? Alguma reação?"
+        },
+        {
+            "categoria": "Informação adicional",
+            "pergunta": "13. Tem alguma outra informação que gostaria de relatar?"
+        },
+        {
+            "categoria": "Veracidade das informações",
+            "pergunta": "14. Você declara a veracidade de todas as informações dadas anteriormente?"
+        }
+    ];

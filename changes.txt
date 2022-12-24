@@ -1,0 +1,15 @@
+WHATSAPP
+
+BACK
+back/app/Http/Controllers/CustomController.php
+
+
+FRONT
+front/css/custom.css
+front/js/app/controllers/dentista-controller.js
+front/js/app/controllers/paciente-controller.js
+front/js/app/utils/utils-functions.js
+front/views/admin-pacientes.html
+
+.github/workflows/deploy.yml
+front/css/custom.less

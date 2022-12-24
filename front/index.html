@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Login</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="vendors/feather/feather.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/vertical-layout-light/style.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+</head>
+
+<body class="login" ng-app="principal" ng-controller="LoginController">
+  <div class="loading-wrapper" loading>
+    <div class="loading"></div>
+    <div class="overlay2"></div>
+  </div>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+        <div class="row flex-grow">
+          <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="auth-form-transparent text-left p-3">
+              <div class="brand-logo">
+                <img src="images/logo.jpg" alt="logo">
+              </div>
+              <h4>Bem vindo!</h4>
+              <h6 class="font-weight-light">Que bom ter você aqui!</h6>
+              <form class="pt-3" name="formulario" autocomplete="nope" novalidate>
+                <div class="form-group">
+                  <label for="exampleInputEmail">Email</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend bg-transparent">
+                      <span class="input-group-text bg-transparent border-right-0">
+                        <i class="mdi mdi-account-outline text-primary"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control form-control-lg border-left-0" id="exampleInputEmail" ng-model="form.email" ng-required="true" placeholder="Usuário">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword">Senha</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend bg-transparent">
+                      <span class="input-group-text bg-transparent border-right-0">
+                        <i class="mdi mdi-lock-outline text-primary"></i>
+                      </span>
+                    </div>
+                    <input type="password" class="form-control form-control-lg border-left-0" id="exampleInputPassword" ng-model="form.password" ng-required="true" placeholder="Senha">                        
+                  </div>
+                </div>
+                <div class="my-2 d-flex justify-content-between align-items-center">
+                  <!-- <a href="#" class="auth-link text-black">Esqueceu sua senha?</a> -->
+                </div>
+                <div class="my-3">
+                  <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" 
+                  ng-disabled="!formulario.$valid"
+                  ng-click="login()">ENTRAR</button>
+                  <p class="center">Versão: 0.22.0</p>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-6 login-half-bg d-flex flex-row">
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- base:js -->
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <script src="vendors/sweetalert/sweetalert.min.js"></script>
+  <!-- endinject -->
+  <!-- inject:js -->
+  <script src="js/template/off-canvas.js"></script>
+  <script src="js/template/hoverable-collapse.js"></script>
+  <script src="js/template/template.js"></script>
+  <script src="js/template/settings.js"></script>
+  <script src="js/template/todolist.js"></script>
+  <script src="js/template/alerts.js"></script>
+  <!-- endinject -->
+
+  <!-- JS VENDOR -->
+  <!-- jquery - ja tem o 3.4.1 (eu usava v2.1.4)-->
+  <!-- <script src="javascript/vendors/jquery/jquery.min.js"></script> -->
+  <!-- bootstrap - ja tem o 4.3.1 (eu usava v3.3.4)-->
+  <!-- <script src="javascript/vendors/bootstrap/bootstrap.min.js"></script> -->
+  
+  <script src="js/vendors/angular/angular-1.5.8.js"></script>
+  <script src="js/vendors/ng-storage/ngStorage.js"></script>
+  <script src="js/vendors/angular/angular-route.min.js"></script>
+  <script src='js/vendors/pusher-js/dist/web/pusher.js'></script>
+  <script src='js/vendors/pusher-angular/lib/pusher-angular.js'></script>
+  <script src="https://cdn.rawgit.com/Luegg/angularjs-scroll-glue/master/src/scrollglue.js"></script>
+
+  <!-- JS MINE -->
+  <script src="js/app/app.js"></script>
+  <script src="js/app/config.js"></script>
+
+  <!-- MODULES -->
+  <script src="js/app/utils/utils-functions.js"></script>
+  <script src="js/app/controllers/login-controller.js"></script>
+  <script src="js/app/services/login-service.js"></script>
+  <script src="js/app/services/profissional-service.js"></script>
+  <script src="js/app/diretivas/global-directive.js"></script>
+
+</body>
+
+</html>

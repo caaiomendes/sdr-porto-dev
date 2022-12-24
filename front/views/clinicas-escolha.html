@@ -1,0 +1,33 @@
+<div id="clinicas-escolha" class="clinicas-escolha">
+  <div class="container">
+    <div class="clinicas">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Lista de clínicas</h4>
+                <p class="card-description" ng-if="(objetos | json) != '{}'">Escolha uma <code>clínica</code> para iniciar.</p>
+                <div class="row alert alert-fill-info" role="alert" ng-if="(objetos | json) == '{}' && buscado">
+                    Ainda não temos nada cadastrado :(
+                </div>
+                <div class="row" ng-if="(objetos | json) != '{}'">
+                  <div class="table-sorter-wrapper col-lg-12 table-responsive">
+                    <div class="card rounded mb-2" ng-repeat="objeto in objetos">
+                      <div class="card-body p-3">
+                        <div class="media">
+                          <img ng-if="objeto.logo" ng-src="{{barramento}}/upload/{{objeto.logo}}" alt="image" class="mr-3">
+                          <img ng-if="!objeto.logo" ng-src="images/logo-apenas.jpg" alt="image" class="mr-3">
+                          <div class="media-body">
+                            <h6 class="mb-1">{{objeto.nome}}</h6>
+                            <p class="mb-0 text-muted">
+                              {{objeto.endereco}}                                
+                            </p>
+                          </div>
+                          <button type="button" class="btn btn-primary btn-md btn-block mb-2" ng-click="selecionarClinicaParaTrabalhar(objeto)">Selecionar</button>                              
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

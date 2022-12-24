@@ -1,0 +1,524 @@
+<div id="acertos" class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <div class="content" ng-if="!controles.mostrarClinicas">
+          <div class="row mb-4">
+            <h4 class="card-title">Acertos</h4>
+          </div>
+          <div class="row mb-4">
+            <div class="valores" ng-if="controles.profissionalSelecionado && !objetos.length == 0">
+              <div class="badge badge-pill badge-primary">
+                <span class="texto">Particulares:</span>  
+                <span class="valor">{{acertos.ValorTotalParticular | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-primary">
+                <span class="texto">Convênios:</span>  
+                <span class="valor">{{acertos.ValorTotalConvenio | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-warning">
+                <span class="texto">Imposto Convênio:</span>  
+                <span class="valor">{{acertos.valorImposto | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-primary">
+                <span class="texto">Reembolsos:</span>  
+                <span class="valor">{{acertos.reembolsos.ValorTotal | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>
+              <div class="badge badge-pill badge-danger">
+                <span class="texto">Descontos:</span>  
+                <span class="valor">{{acertos.descontos.ValorTotalDescontado | currency : 'R$ '}} </span> 
+                <span class="moeda"></span>
+              </div>
+              <br>            
+              <div class="badge badge-pill badge-success">
+                <span class="texto">Total:</span>  
+                <span class="valor">{{acertos.ValorTotalResumo | currency : 'R$ '}} </span> 
+                <span class="moeda"></span> 
+              </div>
+              <br>  
+            </div>
+            <img class="logotipo" ng-src="{{imagem_clinica}}" width="120px" />
+            <div class="dados ml-2">
+              <h4 class="">Clinica: {{controles.clinicaSelecionada.nome}}</h4>
+              <button type="button" class="btn btn-icon-text btn-warning mt-2" ng-click="trocarDeClinica()">
+                <i class="mdi mdi-tooth btn-icon-prepend"></i>Escolher outra Clínica</button>
+              <br>
+              <div class="escolher-ano mt-4">
+                <!-- <div id="datepickerAcertos" class="input-group date datepickerAcertos">
+                  <input type="text" id="data" class="form-control" ng-model="dataAtual" ng-required="true">
+                  <span class="input-group-addon input-group-append border-left">
+                    <span class="mdi mdi-calendar input-group-text"></span>
+                  </span>
+                </div>
+                <br/> -->
+                <input type="number" class="form-control mr-2" oninput="javascript: if (this.value.length > 2 ) this.value = this.value.slice(0, 2); if(this.value > 12 || this.value < 1) document.getElementById('botaoBuscar').setAttribute('disabled',true); else document.getElementById('botaoBuscar').removeAttribute('disabled')" min="1" max="12" ng-model="controles.mes">
+                <input type="number" class="form-control mr-2" oninput="javascript: if (this.value.length > 4 ) this.value = this.value.slice(0, 4); if(this.value > 2030 || this.value < 2000) document.getElementById('botaoBuscar').setAttribute('disabled',true); else document.getElementById('botaoBuscar').removeAttribute('disabled')" min="2000" max="2030" ng-model="controles.ano">
+                <button type="button" id="botaoBuscar" class="btn btn btn-primary mr-2" ng-click="buscar()">Buscar</button>
+              </div>
+              <br>
+            </div>
+          </div>
+          <button ng-if="controles.profissionalSelecionado" id="novo" type="button" class="btn btn-primary btn-rounded" ng-click="abrirModalNovoRegistro()">+</button>
+          <ul class="nav nav-tabs" role="tablist">          
+              <li ng-repeat="prof in profissionais" ng-click="selecionarProfissional($event)" class="nav-item">
+                <a class="nav-link" id="{{prof.profissionalID}}" href="" data-toggle="tab" role="tab"
+                  aria-selected="false">{{prof.nomeProf}}</a>
+              </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" role="tabpanel"
+              aria-labelledby="home-tab">
+              <div class="row alert alert-fill-info" role="alert" ng-if="objetos.length == 0 && objetos2.length == 0">
+                <p>
+                Não encontramos resultados para esta busca :( 
+                </p>
+                <label class="badge badge-danger hide" >{{controles.ano}} - {{controles.mes}}</label>
+              </div>
+              <div ng-if="controles.profissionalSelecionado">
+                <div id="grupo-particular" class="card mt-3">
+                  <div class="particular card-body">
+                    <h4 class="card-title badge badge-pill status badge-success">Particulares</h4>
+                      <div ng-if="acertos.particulares.length > 0" class="tabela tabela1">
+                          <table class="table table-striped table-hover">
+                              <thead class="thead-dark">
+                                <tr>
+                                  <th scope="col">Nome Paciente</th>
+                                  <th scope="col">Procedimento</th>
+                                  <th scope="col">Forma de Pagamento</th>
+                                  <th scope="col">Valor Procedimento</th>
+                                  <th scope="col">Comissão</th>
+                                  <th scope="col">Valor</th>
+                                  <th scope="col">Observações</th>
+                                  <th scope="col">Visão Dentista</th>
+                                </tr>
+                              </thead>
+                              <tbody>  
+                                <tr ng-repeat="item in acertos.particulares">
+                                  <td
+                                  data-toggle="tooltip" 
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomePaciente}}" 
+                                  >{{item.nomePaciente | limitTo: 20}} {{item.nomePaciente.length > 20? '...' : ''}}</td>
+                                  <td
+                                  ng-if="!item.nomeProc" data-toggle="tooltip"
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.procedimentoID}}" 
+                                  >{{item.procedimentoID | limitTo: 20}} {{item.procedimentoID.length > 20? '...' : ''}}</td>
+                                  <td
+                                  ng-if="item.nomeProc" data-toggle="tooltip"
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomeProc}}" 
+                                  >{{item.nomeProc | limitTo: 20}} {{item.nomeProc.length > 20? '...' : ''}}</td>
+                                  <td>{{item.forma}}</td>
+                                  <td>{{item.valorProcedimento | currency : 'R$ ' }} </td>
+                                  <td>
+                                    <a href="javascript:void(0)" class="link" ng-click="abrirModalEditInline($event,item)">
+                                      <i id="comissao" class="fa fa-edit fa-lg" ></i>
+                                    </a> {{item.comissao}}%</td>
+                                  <td>{{item.valor | currency : 'R$ '}}</td>
+                                  <td>
+                                    <a href="javascript:void(0)" class="link" ng-click="abrirModalEditInline($event,item)">
+                                      <i id="observacoes" class="fa fa-edit fa-lg" ></i>
+                                    </a> {{item.observacoes}}</td>
+                                  </td>
+                                  <td>
+                                    <div class="form-check mt-0">
+                                      <label class="form-check-label" >
+                                        <input ng-model="item.visaoDentista" ng-change="ocultarItemDentista(item)" type="checkbox" class="form-check-input">
+                                        <i class="input-helper"></i>
+                                      </label>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>Total Pago</th>
+                                  <td></td>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalProcParticular | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalParticular | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                            <!-- <pre>
+                              {{lst | json}}
+                            </pre> -->
+                      </div>
+                    <!-- </div> -->
+                    <div class="row alert alert-fill-info" role="alert" ng-if="acertos.particulares.length <= 0">
+                      Não encontramos procedimentos particulares este profissional...
+                    </div>
+                  </div>
+                </div>
+                <div id="grupo-convenio" class="card mt-3">
+                  <div class="convenio card-body">  
+                    <h4 class="card-title badge badge-pill status badge-success">Convênio</h4>
+                      <div class="tabela tabela2">
+                          <table ng-if="acertos.convenio.length > 0" class="table table-striped table-hover">
+                              <thead class="thead-dark">
+                                <tr>
+                                  <th scope="col">Nome Paciente</th>
+                                  <th scope="col">Procedimento</th>
+                                  <th scope="col">Convênio</th>
+                                  <th scope="col">Número da Guia</th>
+                                  <th scope="col">Valor do Procedimento</th>
+                                  <th scope="col">Comissão</th>
+                                  <th scope="col">Valor</th>
+                                  <th scope="col">Glosas</th>
+                                  <th scope="col">Visão Dentista</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-if="item.status != 'Glosado'" ng-repeat="item in acertos.convenio">
+                                  <td
+                                  data-toggle="tooltip" 
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomePaciente}}" 
+                                  >{{item.nomePaciente | limitTo: 20}} {{item.nomePaciente.length > 20? '...' : ''}}</td>
+                                  <td
+                                  data-toggle="tooltip"
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomeProc}}" 
+                                  >{{item.nomeProc | limitTo: 20}} {{item.nomeProc.length > 20? '...' : ''}}</td>
+                                  <td>{{item.convenio}}</td>
+                                  <td>{{item.numeroGuia}}</td>
+                                  <td>{{item.valorProcedimento | currency : 'R$ ' }}</td>
+                                  <td>
+                                    <a href="javascript:void(0)" class="link" ng-click="abrirModalEditInline($event,item)">
+                                      <i id="comissao" class="fa fa-edit fa-lg" ></i>
+                                    </a> {{item.comissao}}%</td>
+                                  <td>{{item.valor | currency : 'R$ '}}</td>
+                                  <td> {{item.glosas}}</td>
+                                  <td>
+                                    <div class="form-check mt-0">
+                                      <label class="form-check-label" >
+                                        <input ng-model="item.visaoDentista" ng-change="ocultarItemDentista(item)" type="checkbox" class="form-check-input">
+                                        <i class="input-helper"></i>
+                                      </label>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr class="table-danger" ng-if="item.status == 'Glosado'" ng-repeat="item in acertos.convenio">
+                                  <td
+                                  data-toggle="tooltip" 
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomePaciente}}" 
+                                  >{{item.nomePaciente | limitTo: 20}} {{item.nomePaciente.length > 20? '...' : ''}}</td>
+                                  <td
+                                  data-toggle="tooltip"
+                                  onmouseenter="$(this).tooltip('show')"
+                                  title="{{item.nomeProc}}" 
+                                  >{{item.nomeProc | limitTo: 20}} {{item.nomeProc.length > 20? '...' : ''}}</td>
+                                  <td>{{item.convenio}}</td>
+                                  <td>{{item.numeroGuia}}</td>
+                                  <td>{{item.valorProcedimento | currency : 'R$ '}}</td>
+                                  <td>
+                                    <a href="javascript:void(0)" class="link" ng-click="abrirModalEditInline($event,item)">
+                                      <i id="comissao" class="fa fa-edit fa-lg" ></i>
+                                    </a> {{item.comissao}}%</td>
+                                  <td>{{item.valor | currency : 'R$ ' }}</td>
+                                  <td>
+                                    <a href="javascript:void(0)" class="link" ng-click="abrirModalEditInline($event,item)">
+                                      <i id="glosas" class="fa fa-edit fa-lg" ></i>
+                                    </a> {{item.glosas}}</td>
+                                    <td>
+                                      <div class="form-check mt-0">
+                                        <label class="form-check-label" >
+                                          <input ng-model="item.visaoDentista" ng-change="ocultarItemDentista(item)" type="checkbox" class="form-check-input">
+                                          <i class="input-helper"></i>
+                                        </label>
+                                      </div>
+                                    </td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>Total Pago</th>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalProcConvenio | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalConvenio | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                                <tr class="table-danger">
+                                  <th>Total Glosado</th>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalProcGlosados | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <th>{{acertos.ValorTotalGlosados | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                              </tfoot>
+                          </table>
+                      </div>
+                    <!-- </div> -->
+                    <div class="row alert alert-fill-info" role="alert" ng-if="acertos.convenio.length <= 0">
+                      Não encontramos procedimentos do tipo convênio para este profissional...
+                    </div>
+                  </div>
+                </div>
+                <div id="grupo-reembolso" class="card mt-3">
+                  <div class="convenio card-body">  
+                    <h4 class="card-title badge badge-pill status badge-success">Reembolsos</h4>
+                      <div ng-if="acertos.reembolsos.length > 0" class="tabela tabela2">
+                          <table class="table table-striped table-hover">
+                              <thead class="thead-dark">
+                                <tr>
+                                  <th scope="col">Motivo</th>
+                                  <th scope="col">Valor</th>
+                                  <th scope="col">Ação</th>
+                                  <th scope="col">Visão Dentista</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-repeat="item in acertos.reembolsos">
+                                  <td>{{item.motivo}}</td>
+                                  <td>{{item.valor | currency : 'R$ '}}</td>
+                                  <td><label class="badge badge-danger" id="btn-excluir" ng-click="excluir(item)">Excluir</label></td> 
+                                  <td>
+                                    <div class="form-check mt-0">
+                                      <label class="form-check-label" >
+                                        <input ng-model="item.visaoDentista" ng-change="ocultarItemDentista(item)" type="checkbox" class="form-check-input">
+                                        <i class="input-helper"></i>
+                                      </label>
+                                    </div>
+                                  </td>                                 
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>Total</th>
+                                  <th>{{acertos.reembolsos.ValorTotal | currency : 'R$ '}}</th>
+                                  <th></th>
+                                  <th></th>
+                                </tr>
+                              </tfoot>
+                          </table>
+              
+                      </div>
+                    <!-- </div> -->
+                    <div class="row alert alert-fill-info" role="alert" ng-if="acertos.reembolsos.length <= 0">
+                      Não encontramos reembolsos para este profissional...
+                    </div>
+                  </div>
+                </div>
+                <div id="grupo-descontos" class="card mt-3">
+                  <div class="convenio card-body">  
+                    <h4 class="card-title badge badge-pill status badge-success">Descontos</h4>
+                      <div class="tabela tabela2">
+                          <table ng-if="acertos.descontos.length > 0" class="table table-striped table-hover">
+                              <thead class="thead-dark">
+                                <tr>
+                                  <th scope="col">Nome</th>
+                                  <th scope="col">Motivo</th>
+                                  <th scope="col">Valor do Desconto</th>
+                                  <th scope="col">Comissão</th>
+                                  <th scope="col">Valor Descontado</th>
+                                  <th scope="col">Ação</th>
+                                  <th scope="col">Visão Dentista</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-repeat="item in acertos.descontos">
+                                  <td>{{item.nome}}</td>
+                                  <td>{{item.motivo}}</td>
+                                  <td>{{item.valor | currency : 'R$ '}}</td>
+                                  <td>{{item.comissao}} %</td>
+                                  <td>{{item.valorDescontado | currency : 'R$ '}}</td>
+                                  <td><label class="badge badge-danger" id="btn-excluir" ng-click="excluir(item)">Excluir</label></td>
+                                  <td>
+                                    <div class="form-check mt-0">
+                                      <label class="form-check-label" >
+                                        <input ng-model="item.visaoDentista" ng-change="ocultarItemDentista(item)" type="checkbox" class="form-check-input">
+                                        <i class="input-helper"></i>
+                                      </label>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>Total Pago</th>
+                                  <td></td>
+                                  <th>{{acertos.descontos.ValorTotal | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <th>{{acertos.descontos.ValorTotalDescontado | currency : 'R$ '}}</th>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                              </tfoot>
+                          </table>
+              
+                      </div>
+                    <!-- </div> -->
+                    <div class="row alert alert-fill-info" role="alert" ng-if="acertos.descontos.length <= 0">
+                      Não encontramos descontos para este profissional...
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div ng-if="!controles.profissionalSelecionado && (!objetos.length == 0 || !objetos2.length == 0)">
+                <div class="alert alert-fill-primary" role="alert">
+                  <i class="mdi mdi-alert-circle"></i>
+                  Selecione um profissional
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content" ng-if="controles.mostrarClinicas">
+          <escolha-clinica class="clinicas-escolha" origem="acertos" ></escolha-clinica>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modal-novo-registro" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Novo registro</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form name="formulario">
+          <div class="form-group">
+            <!-- <div id="datepicker" class="input-group date datepicker">
+              <input type="text" id="data" class="form-control" ng-model="objeto.data" readonly ng-required="true">
+              <span class="input-group-addon input-group-append border-left">
+                <span class="mdi mdi-calendar input-group-text"></span>
+              </span>
+            </div> -->
+            <label>Mês: (*)<input type="number" class="form-control" min="1" max="12" ng-model="objeto.mes"></label>
+            <label>Ano: (*)<input type="number" class="form-control mr-2" min="2000" max="2030" ng-model="objeto.ano"></label>
+          </div>
+          <div class="form-group">
+            <label>Tipo (*)</label>
+            <select ng-change="formatarCampos()" class="form-control" id="tipo" ng-model="objeto.tipo" ng-required="true">
+              <option disabled value="">Escolha</option>
+              <!-- <option value="particular">Particular</option>
+              <option value="convenio">Convênio</option> -->
+              <option value="reembolso">Reembolso</option>
+              <option value="desconto">Desconto</option>
+            </select>
+          </div>
+          <div class="row" ng-if="objeto.tipo == 'particular'">
+            <div class="col-md-6">
+              <label>Paciente (*)</label>
+              <input type="text" class="form-control" id="pacienteID" ng-model="objeto.pacienteID" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Procedimento (*)</label>
+              <input type="text" class="form-control" id="procedimentoID" ng-model="objeto.procedimentoID" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Forma de Pagamento (*)</label>
+              <input type="text" class="form-control" id="forma" ng-model="objeto.forma" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Valor Procedimento (*)</label>
+              <input type="text" class="form-control" id="valor" ng-model="objeto.valor" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Comissão (*)</label>
+              <input type="text" class="form-control" id="comissao" ng-model="objeto.comissao" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Observações (*)</label>
+              <input type="text" class="form-control" id="observacoes" ng-model="objeto.observacoes" ng-required="true"/>
+            </div>
+          </div>
+          <div class="row" ng-if="objeto.tipo == 'convenio'">
+            <div class="col-md-6">
+              <label>Paciente (*)</label>
+              <input type="text" class="form-control" id="pacienteID" ng-model="objeto.pacienteID" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Procedimento (*)</label>
+              <input type="text" class="form-control" id="procedimentoID" ng-model="objeto.procedimentoID" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Convenio (*)</label>
+              <input type="text" class="form-control" id="convenio" ng-model="objeto.convenio" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Número da Guia (*)</label>
+              <input type="text" class="form-control" id="guia" ng-model="objeto.guia" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Valor do Procedimento (*)</label>
+              <input type="text" class="form-control" id="valor" ng-model="objeto.valor" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Comissão (*)</label>
+              <input type="text" class="form-control" id="comissao" ng-model="objeto.comissao" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Glosas (*)</label>
+              <input type="text" class="form-control" id="glosas" ng-model="objeto.glosas" ng-required="true"/>
+            </div>
+          </div>
+          <div class="row" ng-if="objeto.tipo == 'reembolso'">
+            <div class="col-md-6">
+              <label>Motivo (*)</label>
+              <input type="text" class="form-control" id="motivo" ng-model="objeto.motivo" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Valor (*)</label>
+              <input type="text" class="form-control" id="valor" ng-model="objeto.valor" ng-required="true"/>
+            </div>
+          </div>
+          <div class="row" ng-if="objeto.tipo == 'desconto'">
+            <div class="col-md-6">
+              <label>Nome (*)</label>
+              <input type="text" class="form-control" id="nome" ng-model="objeto.nome" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Motivo (*)</label>
+              <input type="text" class="form-control" id="motivo" ng-model="objeto.motivo" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Valor (*)</label>
+              <input type="text" class="form-control" id="valor" ng-model="objeto.valor" ng-required="true"/>
+            </div>
+            <div class="col-md-6">
+              <label>Comissao (*)</label>
+              <input type="text" class="form-control" id="comissaoDesconto" ng-model="objeto.comissao" ng-required="true"/>
+            </div>
+          </div>
+        </form>
+        <div class="form-group">
+          <label>(*) Campos obrigatórios</label>
+        </div>
+      </div> 
+      <div class="modal-footer">
+        <button type="button" id="btn-salvar" class="btn btn-primary" ng-disabled="!formulario.$valid" ng-click="salvar()">Salvar</button>
+        <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <pre class="hide">
+          {{objeto}}
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
